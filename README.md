@@ -30,3 +30,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+
+# Yasam Dongusu
+
+![Yaşam Döngüsü](https://user-images.githubusercontent.com/101557027/219966294-2fce10c1-9cc7-4d5d-b237-07969716d315.jpg)
