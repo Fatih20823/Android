@@ -159,3 +159,53 @@ public class Kisiler implements Serializable {
     }
 }
 ---------
+
+# Veri Taşıma Görsel Nesne
+
+![Veritasıma](https://user-images.githubusercontent.com/101557027/222669576-994507d5-22a3-4d54-94d6-576a4f91a5f8.gif)
+-------------------
+* MainActivity
+------------------
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextGirdi;
+    private Button buttonGonder;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextGirdi = findViewById(R.id.editTextGirdi);
+        buttonGonder = findViewById(R.id.buttonGonder);
+
+        buttonGonder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String veri = editTextGirdi.getText().toString();
+
+                Intent yeniIntent = new Intent(MainActivity.this,ActivityB.class);
+                yeniIntent.putExtra("mesaj",veri);
+
+                startActivity(yeniIntent);
+            }
+        });
+    }
+}
+---------------
+* ActivityB
+---------------
+public class ActivityB extends AppCompatActivity {
+    private TextView textViewCikti;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_b);
+
+        textViewCikti = findViewById(R.id.textViewCikti);
+
+        String gelenVeri = getIntent().getStringExtra("mesaj");
+
+        textViewCikti.setText(gelenVeri);
+    }
+}
