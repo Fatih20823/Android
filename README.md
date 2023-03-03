@@ -209,3 +209,95 @@ public class ActivityB extends AppCompatActivity {
         textViewCikti.setText(gelenVeri);
     }
 }
+
+# BackStack Uygulaması
+
+![BackStack](https://user-images.githubusercontent.com/101557027/222724919-8e7e84c6-e8de-4d13-be5c-57eede4ddef9.gif)
+
+Sırayla a, b, c ve d fragmentlarını ekleyerek kullanıcıların detay sayfalarını açmasını sağladık. Fakat kullanıcılar geri butonuna basarak anasayfaya gitmek isteyecektir. Normal şartlarda fragment eklemediğimiz durumda bir Activity den diğer Activity e geçtiğimizde, geri butonuna bastığımızda bir önceki Activity e gitmek yerine uygulama arkaplana atılır. Bu aslında istemediğimiz bir durumdur.
+
+Daha iyi bir kullanıcı deneyimi sağlamak için yardımımıza fragmentlar ve backstack kavramı koşar. Activity state e eklediğiniz fragmentları cacheleyerek(önbellek) yeniden fragment yaratmak yerine hem memory den tasarruf eder, hem de esnek bir kullanıcı arayüzü sağlayabilirsiniz.
+
+* MainActivity
+-----------------
+public class MainActivity extends AppCompatActivity {
+    private Button buttonGotoB;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        buttonGotoB = findViewById(R.id.buttonGotoB);
+
+        buttonGotoB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(MainActivity.this,ActivityB.class));
+            }
+        });
+    }
+}
+--------------
+* ActivityB
+--------------
+public class ActivityB extends AppCompatActivity {
+    private Button buttonGotoC;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_b);
+
+        buttonGotoC = findViewById(R.id.buttonGotoC);
+
+        buttonGotoC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(ActivityB.this,ActivityC.class));
+            }
+        });
+    }
+}
+-------------
+* ActivityC
+-------------
+public class ActivityC extends AppCompatActivity {
+    private Button buttonGotoD;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_c);
+
+        buttonGotoD = findViewById(R.id.buttonGotoD);
+
+        buttonGotoD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityC.this,ActivityD.class));
+            }
+        });
+    }
+}
+------------
+* ActivityD
+------------
+public class ActivityD extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_d);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent ıntent = new Intent(ActivityD.this,ActivityB.class);
+
+        ıntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        startActivity(ıntent);
+    }
+}
+------------
