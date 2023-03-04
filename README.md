@@ -301,3 +301,7 @@ public class ActivityD extends AppCompatActivity {
     }
 }
 ------------
+ # finish() Metodu
+ 
+ Finish () kodu aktivite içerisinde ne yapmaktadır?
+Intent başladıktan sonra aktivitenin ölmesi istenirse finish() metodunu kullanılır. Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çalışmaz.
