@@ -305,3 +305,26 @@ public class ActivityD extends AppCompatActivity {
  
  Finish () kodu aktivite içerisinde ne yapmaktadır?
 Intent başladıktan sonra aktivitenin ölmesi istenirse finish() metodunu kullanılır. Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çalışmaz.
+---------------
+![Finish__](https://user-images.githubusercontent.com/101557027/222902373-0fbf209c-26b1-4f49-859d-1ca5c21c0886.gif)
+---------------
+* ActivityOyunEkranı
+----------------
+ public class ActivityOyunEkrani extends AppCompatActivity {
+    private Button buttonBitir;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_oyun_ekrani);
+
+        buttonBitir = findViewById(R.id.buttonBitir);
+
+        buttonBitir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityOyunEkrani.this,ActivitySonuc.class));
+                finish();
+            }
+        });
+    }
+}
