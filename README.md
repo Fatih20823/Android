@@ -328,3 +328,8 @@ Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çal�
         });
     }
 }
+
+# Fragment
+----------
+![Fragment](https://user-images.githubusercontent.com/101557027/225091816-f8949955-65ad-4a45-baae-8edc081a7af3.gif)
+* Fragment’ları, Activity üzerine yapıştırılan Post-It’ ler gibi düşünün. Bir Activity’de istediğiniz kadar Fragment kullanabilirsiniz ve dilerseniz üst üste yapıştırılan kağıtlar gibi Fragment üzerine Fragment ekleyebilirsiniz, çıkarabilirsiniz veya başka bir Fragment ile değiştirebilirsiniz. Fragmentler arası veri akışını da gerçekleştirebilirsiniz.
