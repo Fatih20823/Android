@@ -333,3 +333,6 @@ Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çal�
 ----------
 ![Fragment](https://user-images.githubusercontent.com/101557027/225091816-f8949955-65ad-4a45-baae-8edc081a7af3.gif)
 * Fragment’ları, Activity üzerine yapıştırılan Post-It’ ler gibi düşünün. Bir Activity’de istediğiniz kadar Fragment kullanabilirsiniz ve dilerseniz üst üste yapıştırılan kağıtlar gibi Fragment üzerine Fragment ekleyebilirsiniz, çıkarabilirsiniz veya başka bir Fragment ile değiştirebilirsiniz. Fragmentler arası veri akışını da gerçekleştirebilirsiniz.
+![Fragments](https://user-images.githubusercontent.com/101557027/225094346-888fa52e-fbcb-4acb-9339-68ffea8c8e10.png)
+* Activity ile Fragmentlerin Farkı Nedir?
+Activity, uygulamanın ön planda görünen ve arka planda çalışan bölümüdür. XML türünde bir layout dosyası ve Java dilinde bir class’dan meydana gelir. Her bir Activty’nin kendine ait bir yaşam döngüsü (life-cycle) vardır.
