@@ -336,3 +336,35 @@ Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çal�
 ![Fragments](https://user-images.githubusercontent.com/101557027/225094346-888fa52e-fbcb-4acb-9339-68ffea8c8e10.png)
 * Activity ile Fragmentlerin Farkı Nedir?
 Activity, uygulamanın ön planda görünen ve arka planda çalışan bölümüdür. XML türünde bir layout dosyası ve Java dilinde bir class’dan meydana gelir. Her bir Activty’nin kendine ait bir yaşam döngüsü (life-cycle) vardır.
+
+![yapi](https://user-images.githubusercontent.com/101557027/225094837-83315e98-601e-4c61-b345-bca256f6c6e4.jpg)
+* Bir Activity çalıştırılmaya başladığı zaman, ilgili Activity’nin class’ına ait onCreate(), onStart() ve onResume() methodları, sırasıyla çalışmaya başlar ve kapatıldığı zaman, sırasıyla onPause(), onStop() ve onDestroy() methodları çalışır. Dilerseniz bu methodları Override edip yapılmasını istediğiniz işlemleri bu anlarda yaptırabilirsiniz.
+
+* Fragment’lar aynı Activity’ler gibi bir class ve layout dosyasından oluşurlar. Fragment’ların en büyük avantajı çok daha hızlı ve performanslı olmalarıdır ve aynı ekranda iki farklı Activity çalıştırılamazken dilediğiniz kadar Fragment çalışabilir. Fakat bir Fragment tek başına çalıştırılamaz, çalışabilmesi için bir Activity’e ihtiyaç duyar.
+-----------------
+* MainActivity
+-----------------
+```
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        ft.add(R.id.fragment_tutucu1,new FragmentBirinci());
+        ft.add(R.id.fragment_tutucu2,new Fragmentikinci());
+
+        ft.commit();
+    }
+}
+```
