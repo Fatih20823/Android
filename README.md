@@ -1,6 +1,7 @@
 # Android
 
 # VievBinding
+```
  => build.gradle
  
      buildFeatures {
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-
+```
 # Yasam Dongusu
 
 ![Yaşam Döngüsü](https://user-images.githubusercontent.com/101557027/219966294-2fce10c1-9cc7-4d5d-b237-07969716d315.jpg)
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
  
  * Android studioda kod yazarken başka Activity arasında geçişler yapmamız gerekebilir
  * burda dikkat etmeniz gereken nokta ” MainActivity ” yerine sizde hangi activity gözükücek ise onun adını yazmanı gereklidir.
-
+```
 public class MainActivity extends AppCompatActivity {
     private Button buttonGotoB;
     @Override
@@ -60,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-
+```
 # Sayfalar Arası Veri Taşıma
 
 ![Untitled](https://user-images.githubusercontent.com/101557027/222516961-792b37d9-512c-4b4c-a906-bcb496fab226.gif)
 -----------
 * MainActivity
+```
 public class MainActivity extends AppCompatActivity {
     private Button buttonGotoB;
     @Override
@@ -94,9 +96,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-
+```
 * ActivityB
 -----------
+```
 public class ActivityB extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +121,11 @@ public class ActivityB extends AppCompatActivity {
         Log.e("Gelen Kisi boy",String.valueOf(gelenKisi.getBoy()));
     }
 }
+```
 -----------
 * KisilerClass
 -------
+```
 public class Kisiler implements Serializable {
     private int tcno;
     private String isim;
@@ -158,6 +163,7 @@ public class Kisiler implements Serializable {
         this.boy = boy;
     }
 }
+```
 ---------
 
 # Veri Taşıma Görsel Nesne
@@ -166,6 +172,7 @@ public class Kisiler implements Serializable {
 -------------------
 * MainActivity
 ------------------
+```
 public class MainActivity extends AppCompatActivity {
     private EditText editTextGirdi;
     private Button buttonGonder;
@@ -191,9 +198,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+```
 ---------------
 * ActivityB
 ---------------
+```
 public class ActivityB extends AppCompatActivity {
     private TextView textViewCikti;
 
@@ -209,7 +218,7 @@ public class ActivityB extends AppCompatActivity {
         textViewCikti.setText(gelenVeri);
     }
 }
-
+```
 # BackStack Uygulaması
 
 ![BackStack](https://user-images.githubusercontent.com/101557027/222724919-8e7e84c6-e8de-4d13-be5c-57eede4ddef9.gif)
@@ -220,6 +229,7 @@ Daha iyi bir kullanıcı deneyimi sağlamak için yardımımıza fragmentlar ve 
 
 * MainActivity
 -----------------
+```
 public class MainActivity extends AppCompatActivity {
     private Button buttonGotoB;
     @Override
@@ -238,9 +248,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+```
 --------------
 * ActivityB
 --------------
+```
 public class ActivityB extends AppCompatActivity {
     private Button buttonGotoC;
     @Override
@@ -259,9 +271,11 @@ public class ActivityB extends AppCompatActivity {
         });
     }
 }
+```
 -------------
 * ActivityC
 -------------
+```
 public class ActivityC extends AppCompatActivity {
     private Button buttonGotoD;
     @Override
@@ -279,9 +293,11 @@ public class ActivityC extends AppCompatActivity {
         });
     }
 }
+```
 ------------
 * ActivityD
 ------------
+```
 public class ActivityD extends AppCompatActivity {
 
     @Override
@@ -300,6 +316,7 @@ public class ActivityD extends AppCompatActivity {
         startActivity(ıntent);
     }
 }
+```
 ------------
  # finish() Metodu 
 * Finish () kodu aktivite içerisinde ne yapmaktadır?
@@ -310,6 +327,7 @@ Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çal�
 ---------------
 * ActivityOyunEkranı
 ----------------
+```
  public class ActivityOyunEkrani extends AppCompatActivity {
     private Button buttonBitir;
     @Override
@@ -328,7 +346,7 @@ Gidilen aktiviteden geri dönmek istendiğinde bu aktivite öleceği için çal�
         });
     }
 }
-
+```
 # Fragment
 ----------
 ![Fragment](https://user-images.githubusercontent.com/101557027/225091816-f8949955-65ad-4a45-baae-8edc081a7af3.gif)
