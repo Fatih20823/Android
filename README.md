@@ -368,3 +368,79 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+* FragmentBirinci
+-----------------
+```
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+public class FragmentBirinci extends Fragment {
+
+    private Button buttonTikla1;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_birinci_layout,container,false);
+
+        buttonTikla1 = rootView.findViewById(R.id.buttonTikla1);
+        buttonTikla1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"Hellooooo",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return rootView;
+    }
+}
+```
+* Fragmentikinci
+----------------
+```
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+public class Fragmentikinci extends Fragment {
+
+    private Button buttonTikla2;
+    private TextView textViewSonuc;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_ikinci_layout,container,false);
+
+        buttonTikla2 = rootView.findViewById(R.id.buttonTikla2);
+        textViewSonuc = rootView.findViewById(R.id.textViewSonuc);
+
+        buttonTikla2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                textViewSonuc.setText("Merhaba Fragment");
+            }
+        });
+
+        return rootView;
+
+    }
+}
+```
+--------------
