@@ -463,15 +463,76 @@ public class Fragmentikinci extends Fragment {
 ```
 --------------
 # Bottom Navigation
-* ![BottomNav](https://user-images.githubusercontent.com/101557027/225908727-21512ae6-d8fb-47f4-8d6a-6eab00a67890.gif)
+![BottomNav](https://user-images.githubusercontent.com/101557027/225908727-21512ae6-d8fb-47f4-8d6a-6eab00a67890.gif)
 * build.gradle bolumunden navigation component kütüphanemizi ekliyoruz
-* ![Desktop Screenshot 2023 03 17 - 15 35 41 48 (2)](https://user-images.githubusercontent.com/101557027/225907135-559b4202-dddc-408e-9b01-318babb900eb.png)
+![Desktop Screenshot 2023 03 17 - 15 35 41 48 (2)](https://user-images.githubusercontent.com/101557027/225907135-559b4202-dddc-408e-9b01-318babb900eb.png)
 * res klasörüne navigation klasörü ekleyip navigation resource file oluşturuyoruz daha sonra java klasörüne fragmentlerimizi oluşturup navigation resource file'a ekliyoruz
-* ![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225911730-7c1156d0-e92d-4280-9563-32f132d44ae5.png)
+![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225911730-7c1156d0-e92d-4280-9563-32f132d44ae5.png)
 * res klasörüne menü klasörü oluşturup Ana tasarım oluşturuyoruz
-* ![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225913159-ce467469-bc6b-495e-8807-dc1fe3b2ddb7.png)
-* ![Desktop Screenshot 2023 03 17 - 16 01 58 07 (2)](https://user-images.githubusercontent.com/101557027/225913290-8cdfd452-3831-4175-85f6-7b8fb3c661c0.png)
+![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225913159-ce467469-bc6b-495e-8807-dc1fe3b2ddb7.png)
+![Desktop Screenshot 2023 03 17 - 16 01 58 07 (2)](https://user-images.githubusercontent.com/101557027/225913290-8cdfd452-3831-4175-85f6-7b8fb3c661c0.png)
 * NavHostFragment ile Bottom Navigation birleştirilip arayüz de çalışması sağlanır.
 * menu bottom ların ve fragmentlerin senkronize çalışabilmesi için id lerin ayni olmasına dikkat edilmelidir.
-* ![Desktop Screenshot 2023 03 17 - 16 19 23 81 (2)](https://user-images.githubusercontent.com/101557027/225916773-33d2d368-cf93-451c-a37d-1bc04dd45f25.png)
-* ![Desktop Screenshot 2023 03 17 - 16 19 11 43 (2)](https://user-images.githubusercontent.com/101557027/225916542-46aecb20-05fd-4f1d-98a9-bbd248df049f.png)
+![Desktop Screenshot 2023 03 17 - 16 19 23 81 (2)](https://user-images.githubusercontent.com/101557027/225916773-33d2d368-cf93-451c-a37d-1bc04dd45f25.png)
+![Desktop Screenshot 2023 03 17 - 16 19 11 43 (2)](https://user-images.githubusercontent.com/101557027/225916542-46aecb20-05fd-4f1d-98a9-bbd248df049f.png)
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
+
+import android.os.Bundle;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity {
+    private BottomNavigationView bottomNav;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bottomNav = findViewById(R.id.bottomNav);
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        NavigationUI.setupWithNavController(bottomNav,navHostFragment.getNavController());
+    }
+}
+```
+* birinciFragment
+```
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+public class BirinciFragment extends Fragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_birinci, container, false);
+    }
+}
+```
+* ikinciFragment
+```
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+public class ikinciFragment extends Fragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        return inflater.inflate(R.layout.fragment_ikinci, container, false);
+    }
+}
+```
