@@ -462,3 +462,4 @@ public class Fragmentikinci extends Fragment {
 }
 ```
 --------------
+# Bottom Navigation
