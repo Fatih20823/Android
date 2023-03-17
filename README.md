@@ -473,3 +473,5 @@ public class Fragmentikinci extends Fragment {
 * ![Desktop Screenshot 2023 03 17 - 16 01 58 07 (2)](https://user-images.githubusercontent.com/101557027/225913290-8cdfd452-3831-4175-85f6-7b8fb3c661c0.png)
 * NavHostFragment ile Bottom Navigation birleştirilip arayüz de çalışması sağlanır.
 * menu bottom ların ve fragmentlerin senkronize çalışabilmesi için id lerin ayni olmasına dikkat edilmelidir.
+* ![Desktop Screenshot 2023 03 17 - 16 19 23 81 (2)](https://user-images.githubusercontent.com/101557027/225916773-33d2d368-cf93-451c-a37d-1bc04dd45f25.png)
+* ![Desktop Screenshot 2023 03 17 - 16 19 11 43 (2)](https://user-images.githubusercontent.com/101557027/225916542-46aecb20-05fd-4f1d-98a9-bbd248df049f.png)
