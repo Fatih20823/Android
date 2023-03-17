@@ -463,3 +463,7 @@ public class Fragmentikinci extends Fragment {
 ```
 --------------
 # Bottom Navigation
+* ![BottomNav](https://user-images.githubusercontent.com/101557027/225908727-21512ae6-d8fb-47f4-8d6a-6eab00a67890.gif)
+* build.gradle bolumunden navigation component kütüphanemizi ekliyoruz
+* ![Desktop Screenshot 2023 03 17 - 15 35 41 48 (2)](https://user-images.githubusercontent.com/101557027/225907135-559b4202-dddc-408e-9b01-318babb900eb.png)
+* res klasörüne navigation klasörü ekleyip navigation resource file oluşturuyoruz daha sonra java klasörüne fragmentlerimizi oluşturup navigation resource file'a ekliyoruz
