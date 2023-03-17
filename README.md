@@ -469,3 +469,7 @@ public class Fragmentikinci extends Fragment {
 * res klasörüne navigation klasörü ekleyip navigation resource file oluşturuyoruz daha sonra java klasörüne fragmentlerimizi oluşturup navigation resource file'a ekliyoruz
 * ![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225911730-7c1156d0-e92d-4280-9563-32f132d44ae5.png)
 * res klasörüne menü klasörü oluşturup Ana tasarım oluşturuyoruz
+* ![Desktop Screenshot 2023 03 17 - 15 59 28 47 (2)](https://user-images.githubusercontent.com/101557027/225913159-ce467469-bc6b-495e-8807-dc1fe3b2ddb7.png)
+* ![Desktop Screenshot 2023 03 17 - 16 01 58 07 (2)](https://user-images.githubusercontent.com/101557027/225913290-8cdfd452-3831-4175-85f6-7b8fb3c661c0.png)
+* NavHostFragment ile Bottom Navigation birleştirilip arayüz de çalışması sağlanır.
+* menu bottom ların ve fragmentlerin senkronize çalışabilmesi için id lerin ayni olmasına dikkat edilmelidir.
