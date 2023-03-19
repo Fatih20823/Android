@@ -295,5 +295,6 @@ public class MainActivity extends AppCompatActivity {
 ```
 # ScrollView
 * ScrollView , Sayfa içerisindeki içerik ekran boyutundan daha fazla yer kaplıyorsa aşağı ve yukarı sayfayı hareket ettirmemize yardım eder.
+-----------
 ![Scroll](https://user-images.githubusercontent.com/101557027/226203633-a2aa846e-2fc2-4c25-bc47-51119a047d05.gif)
 --------------
