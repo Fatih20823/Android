@@ -298,3 +298,191 @@ public class MainActivity extends AppCompatActivity {
 -----------
 ![Scroll](https://user-images.githubusercontent.com/101557027/226203633-a2aa846e-2fc2-4c25-bc47-51119a047d05.gif)
 --------------
+# DateTimePicker
+![DateTimePicker](https://user-images.githubusercontent.com/101557027/226410300-82cea92b-9a43-4279-acdd-fc318feb9f62.gif)
+--------------
+* MainActivity
+--------------
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextSaat,editTextTarih;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextSaat = findViewById(R.id.editTextSaat);
+        editTextTarih = findViewById(R.id.editTextTarih);
+
+        editTextSaat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                int saat = calendar.get(Calendar.HOUR_OF_DAY);
+                int dakika = calendar.get(calendar.MINUTE);
+                TimePickerDialog timePicker;
+
+                timePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        editTextSaat.setText(hourOfDay+" : "+minute);
+                    }
+                },saat,dakika,true);
+
+                timePicker.setTitle("Saat Seçiniz");
+                timePicker.setButton(DialogInterface.BUTTON_POSITIVE,"Ayarla",timePicker);
+                timePicker.setButton(DialogInterface.BUTTON_NEGATIVE,"İptal",timePicker);
+
+                timePicker.show();
+            }
+        });
+
+        editTextTarih.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar calendar = Calendar.getInstance();
+                int yil = calendar.get(Calendar.YEAR);
+                int ay = calendar.get(Calendar.MONTH);
+                int gun = calendar.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePicker;
+
+                datePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        editTextTarih.setText(year+"/"+month+"/"+dayOfMonth);
+                    }
+                },yil,ay,gun);
+
+                datePicker.setTitle("Tarih Seçiniz");
+                datePicker.setButton(DialogInterface.BUTTON_POSITIVE,"Ayarla",datePicker);
+                datePicker.setButton(DialogInterface.BUTTON_NEGATIVE,"İptal",datePicker);
+                datePicker.show();
+            }
+        });
+    }
+}
+```
+# ListView
+![ListViewKul](https://user-images.githubusercontent.com/101557027/226411073-7f2ff400-3d16-451c-9fa9-5d3a66232ff7.gif)
+* MainActivity
+----------
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.example.listviewkullanimi.R;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    private ListView listView;
+    private ArrayList<String> ulkeler = new ArrayList<>();
+    private ArrayAdapter<String> veriAdaptoru;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        listView = findViewById(R.id.listView);
+
+        ulkeler.add("Türkiye");
+        ulkeler.add("İtalya");
+        ulkeler.add("Güney Kore");
+        ulkeler.add("Almanya");
+        ulkeler.add("Çin");
+        ulkeler.add("İspanya");
+        ulkeler.add("Portekiz");
+        ulkeler.add("Japonya");
+        ulkeler.add("Danimarka");
+
+        veriAdaptoru = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,android.R.id.text1,ulkeler);
+
+        listView.setAdapter(veriAdaptoru);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext()
+                        ,"Seçtiğiniz Ülke : "+ulkeler.get(position)
+                        ,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+}
+```
+# GridView
+![GridViewKul](https://user-images.githubusercontent.com/101557027/226410702-c2dd0847-6c42-445a-88a6-c58116f9849c.gif)
+* mainActivity
+--------
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.example.listviewkullanimi.R;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    private GridView gridView;
+    private ArrayList<String> ulkeler = new ArrayList<>();
+    private ArrayAdapter<String> veriAdaptoru;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        gridView = findViewById(R.id.gridView);
+
+        ulkeler.add("Türkiye");
+        ulkeler.add("İtalya");
+        ulkeler.add("Güney Kore");
+        ulkeler.add("Almanya");
+        ulkeler.add("Çin");
+        ulkeler.add("İspanya");
+        ulkeler.add("Portekiz");
+        ulkeler.add("Japonya");
+        ulkeler.add("Danimarka");
+
+        veriAdaptoru = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,android.R.id.text1,ulkeler);
+
+        gridView.setAdapter(veriAdaptoru);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext()
+                        ,"Seçtiğiniz Ülke : "+ulkeler.get(position)
+                        ,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+}
+```
