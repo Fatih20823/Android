@@ -143,3 +143,73 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+# SnackBar
+-----------
+![SnackBar](https://user-images.githubusercontent.com/101557027/226877166-e0e72d2c-7abe-47a1-ab1d-cfa87e15b38e.gif)
+-----------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.google.android.material.snackbar.Snackbar;
+
+public class MainActivity extends AppCompatActivity {
+    private Button buttonNormal,buttonGeriDonus,buttonOzel;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        buttonNormal = findViewById(R.id.buttonNormal);
+        buttonGeriDonus = findViewById(R.id.buttonGeriDonus);
+        buttonOzel = findViewById(R.id.buttonOzel);
+
+        buttonNormal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar .make(v,"Merhaba",Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        buttonGeriDonus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v,"Mesaj Silinsin mi?",Snackbar.LENGTH_SHORT)
+                        .setAction("Evet", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                              Snackbar.make(v,"Mesaj Silindi",Snackbar.LENGTH_SHORT).show();
+                        }
+                }).show();
+            }
+        });
+
+        buttonOzel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Snackbar snackbar = Snackbar.make(v,"Internet Bağlantısı Yok!",Snackbar.LENGTH_SHORT)
+                        .setAction("Tekrar Dene", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                });
+
+                snackbar.setActionTextColor(Color.RED);// Button Rengi
+
+                snackbar.setBackgroundTint(Color.BLACK);// Arkaplan Rengi
+
+                snackbar.setTextColor(Color.WHITE);// Mesaj Rengi
+
+                snackbar.show();
+            }
+        });
+    }
+}
+```
