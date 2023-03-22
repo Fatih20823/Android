@@ -213,3 +213,42 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+# Dark Mod Kullanimi
+------------
+![Dark-Mod](https://user-images.githubusercontent.com/101557027/227028685-10795d96-f0de-4ea3-902f-05f7d8df32eb.gif)
+------------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+    private Button buttonNormal,buttonKaranlik;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        buttonNormal = findViewById(R.id.buttonNormal);
+        buttonKaranlik = findViewById(R.id.buttonKaranlik);
+
+        buttonNormal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
+
+        buttonKaranlik.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        });
+    }
+}
+```
