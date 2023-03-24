@@ -1,5 +1,4 @@
 # EditText FloatingLabel
------------
 ![EdittextFloatingLabelKul](https://user-images.githubusercontent.com/101557027/227474285-27514c96-a6f2-4018-94ff-bb69d030735f.gif)
 -----------
 * MainActivity
