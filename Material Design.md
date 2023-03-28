@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 --------------
+![Desktop Screenshot 2023 03 27 - 18 04 18 35](https://user-images.githubusercontent.com/101557027/228343444-c4b26fbf-cb56-4137-b029-cec94abd0a58.png)
 * RecyclerViewAdapter
 ```
 import android.content.Context;
