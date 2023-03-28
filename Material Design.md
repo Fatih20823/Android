@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 ```
 # RecyclerView Kullanımı
 ![Untitled4](https://user-images.githubusercontent.com/101557027/228341884-2e85d304-9455-4644-a33b-77700008fe15.gif)
+![RV-StaggerredGridLayoutManager](https://user-images.githubusercontent.com/101557027/228343659-673c0875-e898-4654-8368-ba949c952fa1.png)
 -----------
 * MainActivity
 ```
