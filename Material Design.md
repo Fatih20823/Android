@@ -258,3 +258,265 @@ public class BasitRVAdapter extends RecyclerView.Adapter<BasitRVAdapter.CardView
     }
 }
 ```
+# RecyclerView Film Uygulaması
+![RecyclerUygulama](https://user-images.githubusercontent.com/101557027/228482696-84bf5054-600b-4205-864f-02680b8c0341.gif)
+----------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import android.os.Bundle;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    private RecyclerView rv;
+    private ArrayList<Filmler> filmlerArrayList;
+    private FilmAdapter adapter;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        rv = findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+
+        rv.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
+
+        Filmler f1 = new Filmler(1,"Ayla","ayla",12.99);
+        Filmler f2 = new Filmler(2,"The Collection","collection",10.99);
+        Filmler f3 = new Filmler(3,"Ev","ev",11.99);
+        Filmler f4 = new Filmler(4,"Kapı","kapi",9.99);
+        Filmler f5 = new Filmler(5,"Super Hayvanlar","superpets",15.99);
+        Filmler f6 = new Filmler(6,"İllüzyonist","illusyonist",7.99);
+
+        filmlerArrayList = new ArrayList<>();
+        filmlerArrayList.add(f1);
+        filmlerArrayList.add(f2);
+        filmlerArrayList.add(f3);
+        filmlerArrayList.add(f4);
+        filmlerArrayList.add(f5);
+        filmlerArrayList.add(f6);
+
+        adapter = new FilmAdapter(this,filmlerArrayList);
+        rv.setAdapter(adapter);
+
+
+    }
+}
+```
+* Filmler
+```
+package com.example.dataylirecyclerviewkullanimi;
+
+public class Filmler {
+    private int film_id;
+    private String film_ad;
+    private String film_resim_ad;
+    private double film_fiyat;
+
+    public Filmler() {
+    }
+
+    public Filmler(int film_id, String film_ad, String film_resim_ad, double film_fiyat) {
+        this.film_id = film_id;
+        this.film_ad = film_ad;
+        this.film_resim_ad = film_resim_ad;
+        this.film_fiyat = film_fiyat;
+    }
+
+    public int getFilm_id() {
+        return film_id;
+    }
+
+    public void setFilm_id(int film_id) {
+        this.film_id = film_id;
+    }
+
+    public String getFilm_ad() {
+        return film_ad;
+    }
+
+    public void setFilm_ad(String film_ad) {
+        this.film_ad = film_ad;
+    }
+
+    public String getFilm_resim_ad() {
+        return film_resim_ad;
+    }
+
+    public void setFilm_resim_ad(String film_resim_ad) {
+        this.film_resim_ad = film_resim_ad;
+    }
+
+    public double getFilm_fiyat() {
+        return film_fiyat;
+    }
+
+    public void setFilm_fiyat(double film_fiyat) {
+        this.film_fiyat = film_fiyat;
+    }
+}
+```
+* FilmAdapter
+```
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.CardViewTasarimNesneleriniTutucu> {
+    private Context mContext;
+    private List<Filmler> filmlerList;
+
+    public FilmAdapter(Context mContext, List<Filmler> filmlerList) {
+        this.mContext = mContext;
+        this.filmlerList = filmlerList;
+    }
+    public class CardViewTasarimNesneleriniTutucu extends RecyclerView.ViewHolder {
+        public ImageView imageViewFilmResim;
+        public TextView textViewFilmBaslik;
+        public TextView textViewFilmFiyat;
+        public Button buttonSepeteEkle;
+
+        public CardViewTasarimNesneleriniTutucu(@NonNull View itemView) {
+            super(itemView);
+            imageViewFilmResim = itemView.findViewById(R.id.imageViewAyla);
+            textViewFilmBaslik = itemView.findViewById(R.id.textViewFilmBaslik);
+            textViewFilmFiyat = itemView.findViewById(R.id.textViewFilmFiyat);
+            buttonSepeteEkle = itemView.findViewById(R.id.buttonSepeteEkle);
+        }
+    }
+
+    @NonNull
+    @Override
+    public CardViewTasarimNesneleriniTutucu onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.card_film_tasarim,parent,false);
+        return new CardViewTasarimNesneleriniTutucu(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CardViewTasarimNesneleriniTutucu holder, int position) {
+        Filmler film = filmlerList.get(position);
+
+        holder.textViewFilmBaslik.setText(film.getFilm_ad());
+        holder.textViewFilmFiyat.setText(film.getFilm_fiyat()+" TL");
+
+        holder.imageViewFilmResim.setImageResource(mContext.getResources()
+                .getIdentifier(film.getFilm_resim_ad(),"drawable",mContext.getPackageName()));
+
+        holder.buttonSepeteEkle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext,film.getFilm_ad()+" sepete eklendi",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return filmlerList.size();
+    }
+
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* card_film_tasarim.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageViewAyla"
+                android:layout_width="200dp"
+                android:layout_height="300dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ayla" />
+
+            <TextView
+                android:id="@+id/textViewFilmBaslik"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Ayla"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewAyla" />
+
+            <TextView
+                android:id="@+id/textViewFilmFiyat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="14.99 TL"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewFilmBaslik" />
+
+            <Button
+                android:id="@+id/buttonSepeteEkle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Sepete ekle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewFilmFiyat" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
+```
