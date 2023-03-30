@@ -622,6 +622,7 @@ public class MainActivity extends AppCompatActivity {
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tablayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+```
 --------------------
 * FragmentBirinci
 ```
@@ -667,6 +668,7 @@ public class FragmentBirinci extends Fragment {
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+```
 ------------------
 * Fragmentikinci
 ```
