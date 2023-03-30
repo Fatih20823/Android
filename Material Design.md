@@ -644,6 +644,7 @@ public class FragmentBirinci extends Fragment {
     }
 }
 ```
+---------------------
 * fragment_birinci_layout.xml
 ```
 <?xml version="1.0" encoding="utf-8"?>
