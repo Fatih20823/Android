@@ -191,3 +191,64 @@ public class SecondActivity extends AppCompatActivity {
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 ------------------
+# Shared Preferences Giriş Sayaç Uygulası
+![SPGirişSayacUygulaması](https://user-images.githubusercontent.com/101557027/228894749-a993cb46-0ac4-4d03-a284-ef00da66800e.gif)
+------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    private TextView textViewSayac;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewSayac = findViewById(R.id.textViewSayac);
+
+        sp = getSharedPreferences("GirisSayac",MODE_PRIVATE);
+        editor = sp.edit();
+
+        int sayac = sp.getInt("sayac",0);
+
+        editor.putInt("sayac",++sayac);
+
+        editor.commit();
+
+        textViewSayac.setText("Sayaç :"+String.valueOf(sayac));
+    }
+}
+```
+-----------
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewSayac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SAYAÇ : 0"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
