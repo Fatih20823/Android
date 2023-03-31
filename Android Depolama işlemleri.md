@@ -251,4 +251,216 @@ public class MainActivity extends AppCompatActivity {
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+# Shared Preferences Login Ekranı Uygulama
+![spLoginEkrani](https://user-images.githubusercontent.com/101557027/229049257-adcb2652-540b-4462-a90b-e21b98a8095e.gif)
+-------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextUsername,editTextPassword;
+    private Button buttonGiris;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+    private String username;
+    private String password;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        buttonGiris = findViewById(R.id.buttonGiris);
+
+        sp = getSharedPreferences("GirisBilgi",MODE_PRIVATE);
+        editor = sp.edit();
+
+        username = sp.getString("username","kullnıcı adı yok !");
+        password = sp.getString("password","şifre yok !");
+
+        if (username.equals("admin") && password.equals("123")){
+            startActivity(new Intent(MainActivity.this,AnaEkranActivity.class));
+            finish();
+        }
+
+        buttonGiris.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editTextUsername.getText().toString().equals("admin") && editTextPassword.getText().toString().equals("123")) {
+
+                    editor.putString("username",editTextUsername.getText().toString());
+                    editor.putString("password",editTextPassword.getText().toString());
+                    editor.commit();
+
+                    startActivity(new Intent(MainActivity.this,AnaEkranActivity.class));
+                    finish();
+                }else {
+                    Toast.makeText(getApplicationContext(),"Giriş Hatalı !",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:text="Login Ekranı"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="81dp"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="text"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="101dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="numberPassword"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextUsername" />
+
+    <Button
+        android:id="@+id/buttonGiris"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:layout_marginBottom="58dp"
+        android:text="Giriş"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* AnaEkranActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class AnaEkranActivity extends AppCompatActivity {
+
+    private Button buttonCikisYap;
+    private TextView textViewCikti;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+    private String username;
+    private String password;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ana_ekran);
+
+        buttonCikisYap = (Button) findViewById(R.id.buttonCikisYap);
+        textViewCikti = (TextView) findViewById(R.id.textViewCikti);
+
+        sp = getSharedPreferences("GirisBilgi",MODE_PRIVATE);
+        editor = sp.edit();
+
+        username = sp.getString("username","kullanıcı adı yok !");
+        password = sp.getString("password","şifre yok !");
+
+        textViewCikti.setText("Username : "+username+" Password : "+password);
+
+        buttonCikisYap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                editor.remove("username");
+                editor.remove("password");
+                editor.commit();
+
+                startActivity(new Intent(AnaEkranActivity.this,MainActivity.class));
+                finish();
+            }
+        });
+    }
+}
+```
+* activity_ana_ekran.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AnaEkranActivity">
+
+    <TextView
+        android:id="@+id/textViewCikti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:text="Username:. Password:"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonCikisYap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="177dp"
+        android:text="ÇIKIŞ YAP"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
