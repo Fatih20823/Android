@@ -464,3 +464,360 @@ public class AnaEkranActivity extends AppCompatActivity {
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+# Harici Depolama External Storage
+![Harici-Depolama](https://user-images.githubusercontent.com/101557027/229277716-0fc3131f-dbc9-4cce-b6f1-abd8f8ea3ff0.gif)
+----------
+# MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextGirdi;
+    private Button buttonYaz,buttonOku,buttonSil;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextGirdi = findViewById(R.id.editTextGirdi);
+        buttonYaz = findViewById(R.id.buttonYaz);
+        buttonOku = findViewById(R.id.buttonOku);
+        buttonSil = findViewById(R.id.buttonSil);
+
+        buttonYaz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hariciYaz();
+
+            }
+        });
+
+        buttonOku.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hariciOku();
+            }
+        });
+
+        buttonSil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hariciSil();
+            }
+        });
+    }
+
+    public void hariciYaz() {
+      try {
+
+          File dosyaYolu = Environment.getExternalStorageDirectory();
+
+          File dosya = new File(dosyaYolu, "dosyam.txt");
+
+          if (!dosya.exists()) {
+              dosya.createNewFile();
+          }
+
+          FileWriter fw = new FileWriter(dosya);
+
+          BufferedWriter yazici = new BufferedWriter(fw);
+
+          yazici.write(editTextGirdi.getText().toString());
+
+          yazici.flush();
+          yazici.close();
+          fw.close();
+
+          editTextGirdi.setText("");
+      }catch (IOException e) {
+          e.printStackTrace();
+      }
+    }
+
+    public void hariciOku() {
+        try {
+
+            File dosyaYolu = Environment.getExternalStorageDirectory();
+
+            File dosya = new File(dosyaYolu, "dosyam.txt");
+
+            FileReader fr = new FileReader(dosya);
+
+            BufferedReader okuyucu = new BufferedReader(fr);
+
+            StringBuilder sb = new StringBuilder();
+
+            String satir = "";
+
+            while ((satir = okuyucu.readLine()) != null){
+                sb.append(satir+"\n");
+            }
+
+            okuyucu.close();
+
+            editTextGirdi.setText(sb.toString());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void hariciSil() {
+
+            File dosyaYolu = Environment.getExternalStorageDirectory();
+
+            File dosya = new File(dosyaYolu, "dosyam.txt");
+
+            dosya.delete();
+    }
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextGirdi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="106dp"
+        android:ems="10"
+        android:hint="Veri giriniz"
+        android:inputType="textPersonName"
+        android:textColor="#070707"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonYaz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="YAZ"
+        app:layout_constraintEnd_toStartOf="@+id/buttonOku"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+
+    <Button
+        android:id="@+id/buttonOku"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="Oku"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSil"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonYaz"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+
+    <Button
+        android:id="@+id/buttonSil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="Sil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonOku"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+# Dahili Depolama Internal Storage
+![Untitleddahili](https://user-images.githubusercontent.com/101557027/229277674-2183bf65-b5dd-480f-93ee-2a26c41818df.gif)
+-------
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextGirdi;
+    private Button buttonYaz,buttonOku,buttonSil;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextGirdi = findViewById(R.id.editTextGirdi);
+        buttonYaz = findViewById(R.id.buttonYaz);
+        buttonOku = findViewById(R.id.buttonOku);
+        buttonSil = findViewById(R.id.buttonSil);
+
+        buttonYaz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //hariciYaz();
+                dahiliYaz();
+
+            }
+        });
+
+        buttonOku.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //hariciOku();
+                dahilıOku();
+            }
+        });
+
+        buttonSil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //hariciSil();
+                dahiliSil();
+            }
+        });
+    }
+    public void dahiliYaz() {
+
+        try {
+            FileOutputStream fos = openFileOutput("dosyam.txt",MODE_PRIVATE);
+
+            OutputStreamWriter yazici = new OutputStreamWriter(fos);
+
+            yazici.write(editTextGirdi.getText().toString());
+
+            yazici.close();
+
+            editTextGirdi.setText("");
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dahilıOku(){
+         try {
+             FileInputStream fis = openFileInput("dosyam.txt");
+
+             InputStreamReader isr = new InputStreamReader(fis);
+
+             BufferedReader okuyucu = new BufferedReader(isr);
+
+             StringBuilder sb = new StringBuilder();
+
+             String satir = "";
+
+             while(((satir = okuyucu.readLine()) != null)) {
+                 sb.append(satir+"\n");
+             }
+
+             okuyucu.close();
+
+             editTextGirdi.setText(sb.toString());
+         }catch (Exception e) {
+             e.printStackTrace();
+         }
+    }
+
+    public void dahiliSil() {
+        File yol = getFilesDir();
+
+        File file = new File(yol,"dosyam.txt");
+
+        editTextGirdi.setText(String.valueOf(file.delete()));
+
+    }
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextGirdi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="106dp"
+        android:ems="10"
+        android:hint="Veri giriniz"
+        android:inputType="textPersonName"
+        android:textColor="#070707"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonYaz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="YAZ"
+        app:layout_constraintEnd_toStartOf="@+id/buttonOku"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+
+    <Button
+        android:id="@+id/buttonOku"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="Oku"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSil"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonYaz"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+
+    <Button
+        android:id="@+id/buttonSil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="93dp"
+        android:text="Sil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/buttonOku"
+        app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
