@@ -821,3 +821,241 @@ public class MainActivity extends AppCompatActivity {
         app:layout_constraintTop_toBottomOf="@+id/editTextGirdi" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+--------
+# Veri Tabanı Sozluk Uygulaması
+
+* MainActivity
+```
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.util.Log;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+
+    private VeritabaniYardimcisi vt;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        vt = new VeritabaniYardimcisi(this);
+
+        /*new Kelimelerdao().kelimeEkle(vt,"door","kapı");
+        new Kelimelerdao().kelimeEkle(vt,"window","pencere");
+        new Kelimelerdao().kelimeEkle(vt,"sea","deniz");
+        new Kelimelerdao().kelimeEkle(vt,"table","masa");
+        new Kelimelerdao().kelimeEkle(vt,"pencil","kalem");*/
+
+        //new Kelimelerdao().kelimeSil(vt,5);
+
+        //new Kelimelerdao().kelimeGuncelle(vt,4,"seaxxxxx","denizxxxxx");
+
+       // int sonuc =new Kelimelerdao().kayitKontrol(vt);
+       // Log.e("Veri sayısı",String.valueOf(sonuc));
+
+       //Kelimeler kelime = new Kelimelerdao().kelimeGetir(vt,2);
+
+       //Log.e("Kelime",kelime.getKelime_id()+" - "+kelime.getIngilizce()+" - "+kelime.getTurkce());
+
+        ArrayList<Kelimeler> gelenKelimelerListesi = new Kelimelerdao().kelimeAra(vt,"ea");
+
+        for (Kelimeler k: gelenKelimelerListesi) {
+            Log.e(String.valueOf(k.getKelime_id()),k.getIngilizce()+"-"+k.getTurkce());
+        }
+    }
+}
+```
+* Kelimeler
+```
+public class Kelimeler {
+
+    private int kelime_id;
+    private String ingilizce;
+    private String turkce;
+
+    public Kelimeler() {
+    }
+
+    public Kelimeler(int kelime_id, String ingilizce, String turkce) {
+        this.kelime_id = kelime_id;
+        this.ingilizce = ingilizce;
+        this.turkce = turkce;
+    }
+
+    public int getKelime_id() {
+        return kelime_id;
+    }
+
+    public void setKelime_id(int kelime_id) {
+        this.kelime_id = kelime_id;
+    }
+
+    public String getIngilizce() {
+        return ingilizce;
+    }
+
+    public void setIngilizce(String ingilizce) {
+        this.ingilizce = ingilizce;
+    }
+
+    public String getTurkce() {
+        return turkce;
+    }
+
+    public void setTurkce(String turkce) {
+        this.turkce = turkce;
+    }
+}
+```
+* KelimelerDao
+```
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+
+public class Kelimelerdao {
+
+    public void kelimeEkle(VeritabaniYardimcisi vt, String ingilizce,String turkce) {
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        ContentValues degerler = new ContentValues();
+
+        degerler.put("ingilizce",ingilizce);
+        degerler.put("turkce",turkce);
+
+        dbx.insertOrThrow("kelimeler",null,degerler);
+        dbx.close();
+    }
+
+    public ArrayList<Kelimeler> tumkelimeler(VeritabaniYardimcisi vt) {
+        ArrayList<Kelimeler> kelimelerArrayList = new ArrayList<>();
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+
+        Cursor c = dbx.rawQuery("SELECT * FROM kelimeler",null);
+
+        while(c.moveToNext()){
+            @SuppressLint("Range") Kelimeler kelime = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                        ,c.getString(c.getColumnIndex("ingilizce"))
+                        ,c.getString(c.getColumnIndex("turkce")));
+            kelimelerArrayList.add(kelime);
+        }
+
+        return kelimelerArrayList;
+    }
+
+    public void kelimeSil(VeritabaniYardimcisi vt, int kelime_id){
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        dbx.delete("kelimeler","kelime_id=?",new String[]{String.valueOf(kelime_id)});
+        dbx.close();
+    }
+
+    public void kelimeGuncelle(VeritabaniYardimcisi vt,int kelime_id, String ingilizce,String turkce) {
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        ContentValues degerler = new ContentValues();
+
+        degerler.put("ingilizce",ingilizce);
+        degerler.put("turkce",turkce);
+
+        dbx.update("kelimeler",degerler,"kelime_id=?",new String[]{String.valueOf(kelime_id)});
+        dbx.close();
+    }
+
+    @SuppressLint("Range")
+    public int kayitKontrol(VeritabaniYardimcisi vt){
+        int sonuc= 0;
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+
+        Cursor c = dbx.rawQuery("SELECT count(*) as sonuc FROM kelimeler",null);
+
+        while (c.moveToNext()) {
+            sonuc = c.getInt(c.getColumnIndex("sonuc"));
+        }
+        return sonuc;
+    }
+
+    public Kelimeler kelimeGetir(VeritabaniYardimcisi vt, int kelime_id){
+        Kelimeler kelime = new Kelimeler();
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+
+        Cursor c = dbx.rawQuery("SELECT * FROM kelimeler WHERE kelime_id="+kelime_id,null);
+
+        while (c.moveToNext()) {
+            @SuppressLint("Range") Kelimeler k = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                        ,c.getString(c.getColumnIndex("ingilizce"))
+                        ,c.getString(c.getColumnIndex("turkce")));
+            kelime = k;
+        }
+
+        return kelime;
+    }
+
+    public ArrayList<Kelimeler> tumkelimelerRasgele4(VeritabaniYardimcisi vt) {
+        ArrayList<Kelimeler> kelimelerArrayList = new ArrayList<>();
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+
+        Cursor c = dbx.rawQuery("SELECT * FROM kelimeler ORDER BY RANDOM () LIMIT 2",null);
+
+        while(c.moveToNext()){
+            @SuppressLint("Range") Kelimeler kelime = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                    ,c.getString(c.getColumnIndex("ingilizce"))
+                    ,c.getString(c.getColumnIndex("turkce")));
+            kelimelerArrayList.add(kelime);
+        }
+
+        return kelimelerArrayList;
+    }
+    public ArrayList<Kelimeler> kelimeAra(VeritabaniYardimcisi vt,String keyword) {
+        ArrayList<Kelimeler> kelimelerArrayList = new ArrayList<>();
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+
+        Cursor c = dbx.rawQuery("SELECT * FROM kelimeler WHERE ingilizce like '%"+keyword+"%'",null);
+
+        while(c.moveToNext()){
+            @SuppressLint("Range") Kelimeler kelime = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                    ,c.getString(c.getColumnIndex("ingilizce"))
+                    ,c.getString(c.getColumnIndex("turkce")));
+            kelimelerArrayList.add(kelime);
+        }
+
+        return kelimelerArrayList;
+    }
+}
+```
+* VeritabaniYardimcisi
+```
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class VeritabaniYardimcisi extends SQLiteOpenHelper {
+
+    public VeritabaniYardimcisi(@Nullable Context context) {
+        super(context,"sozluk",null,1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE \"kelimeler\" (\n" +
+                "\t\"kelime_id\"\tINTEGER,\n" +
+                "\t\"ingilizce\"\tTEXT,\n" +
+                "\t\"turkce\"\tTEXT,\n" +
+                "\tPRIMARY KEY(\"kelime_id\" AUTOINCREMENT)\n" +
+                ");");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS kelimeler");
+            onCreate(db);
+
+    }
+}
+```
