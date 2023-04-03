@@ -561,3 +561,9 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+# Toolbar kaldırma
+* themes.xml dosyları içine yazılır
+```
+<item name="windowActionBar">false</item>
+<item name="windowNoTitle">true</item>
+```
