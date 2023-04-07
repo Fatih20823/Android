@@ -1059,3 +1059,642 @@ public class VeritabaniYardimcisi extends SQLiteOpenHelper {
     }
 }
 ```
+# Sözlük Uygulaması
+![sozluk](https://user-images.githubusercontent.com/101557027/230627171-e72584cd-f463-4f79-8a29-134345d4f799.gif)
+* MainActivity
+```
+package com.example.szlkuygulamas;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Bundle;
+import android.os.ParcelUuid;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+    private Toolbar toolbar;
+    private RecyclerView rv;
+    private ArrayList<Kelimeler> kelimelerListe;
+    private KelimelerAdapter adapter;
+
+    private Veritabani vt;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
+        rv = findViewById(R.id.rv);
+
+        toolbar.setTitle("Sözlük Uygulaması");
+        setSupportActionBar(toolbar);
+
+        vt = new Veritabani(this);
+
+        veritabaniKopyala();
+
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+
+        kelimelerListe = new kelimelerDao().tumKelimeler(vt);
+
+        adapter = new KelimelerAdapter(this,kelimelerListe);
+        rv.setAdapter(adapter);
+    }
+
+    @Override //Arama çubuğu kodu
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbarmenu,menu);
+
+        MenuItem item = menu.findItem(R.id.action_ara);
+
+        SearchView searchView = (SearchView) item.getActionView();
+
+        searchView.setOnQueryTextListener(this);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override //Arama çubuğu kodu
+    public boolean onQueryTextSubmit(String query) {
+        Log.e("Gönderilen Arama",query);
+        aramaYap(query);
+        return false;
+    }
+
+    @Override //Arama çubuğu kodu
+    public boolean onQueryTextChange(String newText) {
+        Log.e("Harf Girdikçe",newText);
+        aramaYap(newText);
+        return false;
+    }
+
+    public void veritabaniKopyala() {
+        DatabaseCopyHelper databaseCopyHelper = new DatabaseCopyHelper(this);
+
+        try {
+            databaseCopyHelper.createDataBase();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        databaseCopyHelper.openDataBase();
+    }
+
+    public void aramaYap(String aramaKelime) {
+
+        kelimelerListe = new kelimelerDao().kelimeAra(vt,aramaKelime);
+
+        adapter = new KelimelerAdapter(this,kelimelerListe);
+
+        rv.setAdapter(adapter);
+    }
+
+}
+```
+* Kelimeler
+```
+package com.example.szlkuygulamas;
+
+import java.io.Serializable;
+
+public class Kelimeler implements Serializable {
+    private int kelime_id;
+    private String ingilizce;
+    private String turkce;
+
+    public Kelimeler () {
+    }
+
+    public Kelimeler(int kelime_id, String ingilizce, String turkce) {
+        this.kelime_id = kelime_id;
+        this.ingilizce = ingilizce;
+        this.turkce = turkce;
+    }
+
+    public int getKelime_id() {
+        return kelime_id;
+    }
+
+    public void setKelime_id(int kelime_id) {
+        this.kelime_id = kelime_id;
+    }
+
+    public String getIngilizce() {
+        return ingilizce;
+    }
+
+    public void setIngilizce(String ingilizce) {
+        this.ingilizce = ingilizce;
+    }
+
+    public String getTurkce() {
+        return turkce;
+    }
+
+    public void setTurkce(String turkce) {
+        this.turkce = turkce;
+    }
+}
+```
+* KelimelerAdapter
+```
+package com.example.szlkuygulamas;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class KelimelerAdapter extends RecyclerView.Adapter<KelimelerAdapter.CardTasarimTutucu> {
+    private Context mContext;
+    private List<Kelimeler>kelimelerList;
+
+    public KelimelerAdapter() {
+    }
+
+    @NonNull
+    @Override
+    public CardTasarimTutucu onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_tasarim,parent,false);
+
+        return new CardTasarimTutucu(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CardTasarimTutucu holder, int position) {
+        Kelimeler kelime = kelimelerList.get(position);
+
+        holder.textViewingilizce.setText(kelime.getIngilizce());
+        holder.textViewTurkce.setText(kelime.getTurkce());
+
+        holder.kelime_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(mContext,DetayActivity.class);
+
+                intent.putExtra("nesne",kelime);
+
+                mContext.startActivity(intent);
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return kelimelerList.size();
+    }
+
+    public KelimelerAdapter(Context mContext, List<Kelimeler> kelimelerList) {
+        this.mContext = mContext;
+        this.kelimelerList = kelimelerList;
+    }
+
+    public class CardTasarimTutucu extends RecyclerView.ViewHolder {
+        private TextView textViewTurkce;
+        private TextView textViewingilizce;
+        private CardView kelime_card;
+
+        public CardTasarimTutucu(@NonNull View itemView) {
+            super(itemView);
+            textViewTurkce = itemView.findViewById(R.id.textViewTurkce);
+            textViewingilizce = itemView.findViewById(R.id.textViewIngilizce);
+            kelime_card = itemView.findViewById(R.id.kelime_card);
+        }
+    }
+
+}
+```
+* kelimelerDao
+```
+package com.example.szlkuygulamas;
+
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+
+public class kelimelerDao {
+
+    public ArrayList<Kelimeler> tumKelimeler(Veritabani vt) {
+        ArrayList<Kelimeler> kelimelerArrayList = new ArrayList<>();
+
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM kelimeler", null);
+
+        while (c.moveToNext()) {
+            @SuppressLint("Range") Kelimeler k = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                    ,c.getString(c.getColumnIndex("ingilizce"))
+                    ,c.getString(c.getColumnIndex("turkce")));
+
+            kelimelerArrayList.add(k);
+        }
+
+        return kelimelerArrayList;
+
+    }
+
+    public ArrayList<Kelimeler> kelimeAra(Veritabani vt,String aramaKelime) {
+        ArrayList<Kelimeler> kelimelerArrayList = new ArrayList<>();
+
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM kelimeler WHERE ingilizce like '%"+aramaKelime+"%'", null);
+
+        while (c.moveToNext()) {
+            @SuppressLint("Range") Kelimeler k = new Kelimeler(c.getInt(c.getColumnIndex("kelime_id"))
+                    ,c.getString(c.getColumnIndex("ingilizce"))
+                    ,c.getString(c.getColumnIndex("turkce")));
+
+            kelimelerArrayList.add(k);
+        }
+
+        return kelimelerArrayList;
+
+    }
+}
+```
+* Veritabani
+```
+package com.example.szlkuygulamas;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class Veritabani extends SQLiteOpenHelper {
+
+
+    public Veritabani(@Nullable Context context) {
+        super(context, "sozluk.sqlite", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS `kelimeler` (\n" +
+                "\t`kelime_id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "\t`ingilizce`\tTEXT,\n" +
+                "\t`turkce`\tTEXT\n" +
+                ")");
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS kelimeler");
+        onCreate(db);
+    }
+}
+```
+* DetayActivity
+```
+package com.example.szlkuygulamas;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class DetayActivity extends AppCompatActivity {
+    private TextView textTurkce,textingilizce;
+    private Kelimeler kelime;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detay);
+
+        textingilizce = findViewById(R.id.textViewingilizce);
+        textTurkce = findViewById(R.id.textViewturkce);
+
+        kelime = (Kelimeler) getIntent().getSerializableExtra("nesne");
+
+        textingilizce.setText(kelime.getIngilizce());
+        textTurkce.setText(kelime.getTurkce());
+
+    }
+}
+```
+* DatabaseCopyHelper
+```
+package com.example.szlkuygulamas;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.content.Context;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseCopyHelper extends SQLiteOpenHelper  {
+
+
+	//The Android's default system path of your application database.
+    String DB_PATH =null;
+
+    private static String DB_NAME = "sozluk.sqlite";
+
+    private SQLiteDatabase myDataBase;
+
+    private final Context myContext;
+
+    /**
+     * Constructor
+     * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
+     * @param context
+     */
+    public DatabaseCopyHelper(Context context) {
+
+    	super(context, DB_NAME, null, 1);
+        this.myContext = context;
+        DB_PATH="/data/data/"+context.getPackageName()+"/"+"databases/";
+
+    }
+
+  /**
+     * Creates a empty database on the system and rewrites it with your own database.
+     * */
+    public void createDataBase() throws IOException{
+
+    	boolean dbExist = checkDataBase();
+
+    	if(dbExist){
+    		//do nothing - database already exist
+    	}else{
+
+    		//By calling this method and empty database will be created into the default system path
+               //of your application so we are gonna be able to overwrite that database with our database.
+        	this.getReadableDatabase();
+
+        	try {
+
+    			copyDataBase();
+
+    		} catch (IOException e) {
+
+        		throw new Error("Error copying database");
+
+        	}
+    	}
+
+    }
+
+    /**
+     * Check if the database already exist to avoid re-copying the file each time you open the application.
+     * @return true if it exists, false if it doesn't
+     */
+    private boolean checkDataBase(){
+
+    	SQLiteDatabase checkDB = null;
+
+    	try{
+    		String myPath = DB_PATH + DB_NAME;
+    		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+
+    	}catch(SQLiteException e){
+
+    		//database does't exist yet.
+
+    	}
+
+    	if(checkDB != null){
+
+    		checkDB.close();
+
+    	}
+
+    	return checkDB != null ? true : false;
+    }
+
+    /**
+     * Copies your database from your local assets-folder to the just created empty database in the
+     * system folder, from where it can be accessed and handled.
+     * This is done by transfering bytestream.
+     * */
+    private void copyDataBase() throws IOException{
+
+    	//Open your local db as the input stream
+    	InputStream myInput = myContext.getAssets().open(DB_NAME);
+
+
+    	// Path to the just created empty db
+    	String outFileName = DB_PATH + DB_NAME;
+
+    	//Open the empty db as the output stream
+    	OutputStream myOutput = new FileOutputStream(outFileName);
+
+    	//transfer bytes from the inputfile to the outputfile
+    	byte[] buffer = new byte[1024];
+    	int length;
+    	while ((length = myInput.read(buffer))>0){
+    		myOutput.write(buffer, 0, length);
+    	}
+
+    	//Close the streams
+    	myOutput.flush();
+    	myOutput.close();
+    	myInput.close();
+
+    }
+
+    public void openDataBase() throws SQLException{
+
+    	//Open the database
+        String myPath = DB_PATH + DB_NAME;
+    	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+
+
+    }
+
+    @Override
+	public synchronized void close() {
+
+    	    if(myDataBase != null)
+    		    myDataBase.close();
+
+    	    super.close();
+
+	}
+
+
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+	}
+
+	@Override
+	public void onOpen(SQLiteDatabase db) {
+		super.onOpen(db);
+		db.disableWriteAheadLogging();
+	}
+ //return cursor
+
+}
+```
+* activity_detay.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetayActivity">
+
+    <TextView
+        android:id="@+id/textViewingilizce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="186dp"
+        android:text="İngilizce"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewturkce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="276dp"
+        android:text="Türkçe"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* card_tasarim.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/kelime_card"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textViewIngilizce"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="İngilizce"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textViewTurkce"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/textViewTurkce"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:rotationY="0"
+                android:text="Türkçe"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textViewIngilizce"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* toolbar_menu.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_ara"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Ara"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+</menu>
+```
