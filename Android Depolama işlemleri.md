@@ -1698,3 +1698,770 @@ public class DatabaseCopyHelper extends SQLiteOpenHelper  {
         app:showAsAction="always|collapseActionView" />
 </menu>
 ```
+# Bayrak Uygulaması
+![Bayrak](https://user-images.githubusercontent.com/101557027/230773535-ce5d53c4-0065-45c9-854c-4c796fc437c5.gif)
+* MainActivity
+```
+package com.example.bayrakuygulamasi;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import java.io.IOException;
+
+public class MainActivity extends AppCompatActivity {
+    private Button buttonBasla;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        buttonBasla = findViewById(R.id.buttonBasla);
+
+        veritabaniKopyala();
+
+        buttonBasla.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,QuizActivity.class));
+            }
+        });
+    }
+
+    public void veritabaniKopyala() {
+        DatabaseCopyHelper helper = new DatabaseCopyHelper(this);
+
+        try {
+            helper.createDataBase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        helper.openDataBase();
+    }
+}
+```
+* Bayraklar
+```
+package com.example.bayrakuygulamasi;
+
+public class Bayraklar {
+    private int bayrak_id;
+    private String bayrak_ad;
+    private String bayrak_resim;
+
+    public Bayraklar() {
+    }
+
+    public Bayraklar(int bayrak_id, String bayrak_ad, String bayrak_resim) {
+        this.bayrak_id = bayrak_id;
+        this.bayrak_ad = bayrak_ad;
+        this.bayrak_resim = bayrak_resim;
+    }
+
+    public int getBayrak_id() {
+        return bayrak_id;
+    }
+
+    public void setBayrak_id(int bayrak_id) {
+        this.bayrak_id = bayrak_id;
+    }
+
+    public String getBayrak_ad() {
+        return bayrak_ad;
+    }
+
+    public void setBayrak_ad(String bayrak_ad) {
+        this.bayrak_ad = bayrak_ad;
+    }
+
+    public String getBayrak_resim() {
+        return bayrak_resim;
+    }
+
+    public void setBayrak_resim(String bayrak_resim) {
+        this.bayrak_resim = bayrak_resim;
+    }
+}
+
+```
+* BayraklarDao
+```
+package com.example.bayrakuygulamasi;
+
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+
+public class BayraklarDao {
+
+    public ArrayList<Bayraklar> rasgele5Getir(Veritabani vt) {
+        ArrayList<Bayraklar> bayraklarArrayList = new ArrayList<>();
+        SQLiteDatabase db = vt.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM bayraklar ORDER BY RANDOM() LIMIT 5", null);
+
+        while (c.moveToNext()) {
+            @SuppressLint("Range") Bayraklar b = new Bayraklar(c.getInt(c.getColumnIndex("bayrak_id"))
+                    ,c.getString(c.getColumnIndex("bayrak_ad"))
+                    ,c.getString(c.getColumnIndex("bayrak_resim")));
+
+            bayraklarArrayList.add(b);
+        }
+
+        return bayraklarArrayList;
+    }
+
+    public ArrayList<Bayraklar> rasgele3YanlisSecenekGetir(Veritabani vt,int bayrak_id) {
+        ArrayList<Bayraklar> bayraklarArrayList = new ArrayList<>();
+        SQLiteDatabase db = vt.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM bayraklar WHERE bayrak_id != "+bayrak_id+" ORDER BY RANDOM() LIMIT 3", null);
+
+        while (c.moveToNext()) {
+            @SuppressLint("Range") Bayraklar b = new Bayraklar(c.getInt(c.getColumnIndex("bayrak_id"))
+                    ,c.getString(c.getColumnIndex("bayrak_ad"))
+                    ,c.getString(c.getColumnIndex("bayrak_resim")));
+
+            bayraklarArrayList.add(b);
+        }
+
+        return bayraklarArrayList;
+    }
+}
+```
+* DatabaseCopyHelper
+```
+package com.example.bayrakuygulamasi;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.content.Context;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseCopyHelper extends SQLiteOpenHelper  {
+
+
+	//The Android's default system path of your application database.
+	String DB_PATH =null;
+
+	private static String DB_NAME = "bayrakquiz.sqlite";
+
+	private SQLiteDatabase myDataBase;
+
+	private final Context myContext;
+
+	/**
+	 * Constructor
+	 * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
+	 * @param context
+	 */
+	public DatabaseCopyHelper(Context context) {
+
+		super(context, DB_NAME, null, 1);
+		this.myContext = context;
+		DB_PATH="/data/data/"+context.getPackageName()+"/"+"databases/";
+
+	}
+
+	/**
+	 * Creates a empty database on the system and rewrites it with your own database.
+	 * */
+	public void createDataBase() throws IOException{
+
+		boolean dbExist = checkDataBase();
+
+		if(dbExist){
+			//do nothing - database already exist
+		}else{
+
+			//By calling this method and empty database will be created into the default system path
+			//of your application so we are gonna be able to overwrite that database with our database.
+			this.getReadableDatabase();
+
+			try {
+
+				copyDataBase();
+
+			} catch (IOException e) {
+
+				throw new Error("Error copying database");
+
+			}
+		}
+
+	}
+
+	/**
+	 * Check if the database already exist to avoid re-copying the file each time you open the application.
+	 * @return true if it exists, false if it doesn't
+	 */
+	private boolean checkDataBase(){
+
+		SQLiteDatabase checkDB = null;
+
+		try{
+			String myPath = DB_PATH + DB_NAME;
+			checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+
+		}catch(SQLiteException e){
+
+			//database does't exist yet.
+
+		}
+
+		if(checkDB != null){
+
+			checkDB.close();
+
+		}
+
+		return checkDB != null ? true : false;
+	}
+
+	/**
+	 * Copies your database from your local assets-folder to the just created empty database in the
+	 * system folder, from where it can be accessed and handled.
+	 * This is done by transfering bytestream.
+	 * */
+	private void copyDataBase() throws IOException{
+
+		//Open your local db as the input stream
+		InputStream myInput = myContext.getAssets().open(DB_NAME);
+
+
+		// Path to the just created empty db
+		String outFileName = DB_PATH + DB_NAME;
+
+		//Open the empty db as the output stream
+		OutputStream myOutput = new FileOutputStream(outFileName);
+
+		//transfer bytes from the inputfile to the outputfile
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = myInput.read(buffer))>0){
+			myOutput.write(buffer, 0, length);
+		}
+
+		//Close the streams
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
+
+	}
+
+	public void openDataBase() throws SQLException{
+
+		//Open the database
+		String myPath = DB_PATH + DB_NAME;
+		myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+
+
+	}
+
+	@Override
+	public synchronized void close() {
+
+		if(myDataBase != null)
+			myDataBase.close();
+
+		super.close();
+
+	}
+
+
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+	}
+
+	@Override
+	public void onOpen(SQLiteDatabase db) {
+		super.onOpen(db);
+		db.disableWriteAheadLogging();
+	}
+	//return cursor
+
+}
+```
+* QuizActivity
+```
+package com.example.bayrakuygulamasi;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public class QuizActivity extends AppCompatActivity {
+    private TextView textViewDogru,textViewYanlis,textViewSoruSayisi;
+    private ImageView imageViewBayrak;
+    private Button buttonA,buttonB,buttonC,buttonD;
+    private ArrayList<Bayraklar> sorularListe;
+    private ArrayList<Bayraklar> yanlisSeceneklerListe;
+    private Bayraklar dogruSoru;
+    private Veritabani vt;
+    // Sayaç
+    private int soruSayac = 0;
+    private int yanlisSayac = 0;
+    private int dogruSayac = 0;
+    //Secenekleri
+    private HashSet<Bayraklar> secenekleriKaristirmaListe = new HashSet<>();
+    private ArrayList<Bayraklar> seceneklerListe = new ArrayList<>();
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_quiz);
+
+        textViewDogru = findViewById(R.id.textViewDogru);
+        textViewYanlis = findViewById(R.id.textViewYanlis);
+        textViewSoruSayisi = findViewById(R.id.textViewSoruSayi);
+        imageViewBayrak = findViewById(R.id.imageViewBayrak);
+        buttonA = findViewById(R.id.buttonA);
+        buttonB = findViewById(R.id.buttonB);
+        buttonC = findViewById(R.id.buttonC);
+        buttonD = findViewById(R.id.buttonD);
+        
+        vt = new Veritabani(this);
+        Handler handler = new Handler();
+
+        sorularListe = new BayraklarDao().rasgele5Getir(vt);
+
+        soruYukle();
+
+        buttonA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dogruSoru.getBayrak_ad() != buttonA.getText()) {
+                    Toast.makeText(getApplicationContext(), "Doğru Cevap :" + dogruSoru.getBayrak_ad(), Toast.LENGTH_SHORT).show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dogruKontrol(buttonA);
+                            sayacKontrol();
+                        }
+                    }, 2000);
+                } else if (dogruSoru.getBayrak_ad() == buttonA.getText()) {
+                    dogruKontrol(buttonA);
+                    sayacKontrol();
+                }
+
+            }
+        });
+
+        buttonB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dogruSoru.getBayrak_ad() != buttonB.getText()) {
+                    Toast.makeText(getApplicationContext(), "Doğru Cevap :" + dogruSoru.getBayrak_ad(), Toast.LENGTH_SHORT).show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dogruKontrol(buttonB);
+                            sayacKontrol();
+                        }
+                    }, 2000);
+                } else if (dogruSoru.getBayrak_ad() == buttonB.getText()) {
+                    dogruKontrol(buttonB);
+                    sayacKontrol();
+                }
+            }
+        });
+
+        buttonC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dogruSoru.getBayrak_ad() != buttonC.getText()) {
+                    Toast.makeText(getApplicationContext(), "Doğru Cevap :" + dogruSoru.getBayrak_ad(), Toast.LENGTH_SHORT).show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dogruKontrol(buttonC);
+                            sayacKontrol();
+                        }
+                    }, 2000);
+                } else if (dogruSoru.getBayrak_ad() == buttonC.getText()) {
+                    dogruKontrol(buttonC);
+                    sayacKontrol();
+                }
+            }
+        });
+
+        buttonD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dogruSoru.getBayrak_ad() != buttonD.getText()) {
+                    Toast.makeText(getApplicationContext(), "Doğru Cevap :" + dogruSoru.getBayrak_ad(), Toast.LENGTH_SHORT).show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dogruKontrol(buttonD);
+                            sayacKontrol();
+                        }
+                    }, 2000);
+                } else if (dogruSoru.getBayrak_ad() == buttonD.getText()) {
+                    dogruKontrol(buttonD);
+                    sayacKontrol();
+                }
+            }
+        });
+
+    }
+
+    public void soruYukle() {
+
+        textViewSoruSayisi.setText((soruSayac+1)+". SORU");
+
+        dogruSoru = sorularListe.get(soruSayac);
+
+        yanlisSeceneklerListe = new BayraklarDao().rasgele3YanlisSecenekGetir(vt,dogruSoru.getBayrak_id());
+
+        imageViewBayrak.setImageResource(getResources().getIdentifier(dogruSoru.getBayrak_resim()
+                ,"drawable",getPackageName()));
+
+        secenekleriKaristirmaListe.clear();
+        secenekleriKaristirmaListe.add(dogruSoru);
+        secenekleriKaristirmaListe.add(yanlisSeceneklerListe.get(0));
+        secenekleriKaristirmaListe.add(yanlisSeceneklerListe.get(1));
+        secenekleriKaristirmaListe.add(yanlisSeceneklerListe.get(2));
+
+        seceneklerListe.clear();
+
+        for (Bayraklar b: secenekleriKaristirmaListe) {
+            seceneklerListe.add(b);
+        }
+
+        buttonA.setText(seceneklerListe.get(0).getBayrak_ad());
+        buttonB.setText(seceneklerListe.get(1).getBayrak_ad());
+        buttonC.setText(seceneklerListe.get(2).getBayrak_ad());
+        buttonD.setText(seceneklerListe.get(3).getBayrak_ad());
+    }
+
+    public void dogruKontrol (Button button) {
+
+        String buttonYazi = button.getText().toString();
+        String dogruCevap = dogruSoru.getBayrak_ad();
+
+        if(buttonYazi.equals(dogruCevap)) {
+            dogruSayac++;
+        }else {
+            yanlisSayac++;
+        }
+
+        textViewDogru.setText("Doğru : "+dogruSayac);
+        textViewYanlis.setText("Yanlış : "+yanlisSayac);
+    }
+
+    public void sayacKontrol(){
+        soruSayac++;
+
+        if (soruSayac != 5){
+            soruYukle();
+        }else {
+            Intent intent = new Intent(QuizActivity.this,ResaultActivity.class);
+            intent.putExtra("dogruSayac",dogruSayac);
+            startActivity(intent);
+            finish();
+
+
+
+
+
+        }
+    }
+}
+```
+* ResaultActivity
+```
+package com.example.bayrakuygulamasi;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class ResaultActivity extends AppCompatActivity {
+    private TextView textViewSonuc,textViewYuzdeSonuc;
+    private Button buttonTekrar;
+    private int dogruSayac;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_resault);
+
+        textViewSonuc = findViewById(R.id.textViewSonuc);
+        textViewYuzdeSonuc = findViewById(R.id.textViewYuzdeSonuc);
+        buttonTekrar = findViewById(R.id.buttonTekrar);
+
+        dogruSayac = getIntent().getIntExtra("dogruSayac",0);
+
+        textViewSonuc.setText(dogruSayac+ " DOĞRU "+(5-dogruSayac)+" YANLIŞ");
+        textViewYuzdeSonuc.setText("% "+(dogruSayac*100)/5+" BAŞARI");
+
+        buttonTekrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ResaultActivity.this,MainActivity.class));
+                finish();
+            }
+        });
+    }
+}
+```
+* Veritabani
+```
+package com.example.bayrakuygulamasi;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class Veritabani extends SQLiteOpenHelper {
+    public Veritabani(@Nullable Context context) {
+        super(context,"bayrakquiz.sqlite",null,1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS \"bayraklar\" (\n" +
+                "\t`bayrak_id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "\t`bayrak_ad`\tTEXT,\n" +
+                "\t`bayrak_resim`\tTEXT\n" +
+                ")");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXIXTS bayraklar");
+        onCreate(db);
+
+    }
+}
+```
+* activity_quiz.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".QuizActivity">
+
+    <TextView
+        android:id="@+id/textViewDogru"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="32dp"
+        android:text="Doğru : 0"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewYanlis"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewYanlis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="50dp"
+        android:text="Yanlış : 0"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSoruSayi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="1. Soru"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDogru" />
+
+    <ImageView
+        android:id="@+id/imageViewBayrak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonA"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSoruSayi"
+        app:srcCompat="@drawable/turkiye" />
+
+    <Button
+        android:id="@+id/buttonD"
+        android:layout_width="246dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="25dp"
+        android:text="Japonya"
+        android:textAlignment="viewStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonC"
+        android:layout_width="246dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="15dp"
+        android:text="Almanya"
+        android:textAlignment="viewStart"
+        app:layout_constraintBottom_toTopOf="@+id/buttonD"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonB"
+        android:layout_width="246dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="15dp"
+        android:text="İtalya"
+        android:textAlignment="viewStart"
+        app:layout_constraintBottom_toTopOf="@+id/buttonC"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonA"
+        android:layout_width="246dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="15dp"
+        android:text="Türkiye"
+        android:textAlignment="viewStart"
+        app:layout_constraintBottom_toTopOf="@+id/buttonB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QUİZ HOŞGELDİNİZ"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.308" />
+
+    <Button
+        android:id="@+id/buttonBasla"
+        android:layout_width="173dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="180dp"
+        android:text="Başla"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* activity_resault.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ResaultActivity">
+
+    <TextView
+        android:id="@+id/textViewSonuc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="154dp"
+        android:text=" 5 DOĞRU 1 YANLIŞ"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewYuzdeSonuc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="63dp"
+        android:text="% 25 BAŞARI"
+        android:textColor="#E80505"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSonuc" />
+
+    <Button
+        android:id="@+id/buttonTekrar"
+        android:layout_width="175dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="139dp"
+        android:text="TEKRAR DENE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewYuzdeSonuc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
