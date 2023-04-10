@@ -2465,3 +2465,596 @@ public class Veritabani extends SQLiteOpenHelper {
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+# Kişiler Uygulaması
+![Kişiler](https://user-images.githubusercontent.com/101557027/230932156-ff655ab4-ca8d-489c-af1f-a6ed58401402.gif)
+* MainActivity
+```
+package com.example.kisileruygulamas;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+
+
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+    private Toolbar toolbar;
+    private RecyclerView rv;
+    private FloatingActionButton fab;
+    private ArrayList<Kisiler> kisilerArrayList;
+    private KisilerAdapter adapter;
+    private Veritabani  vt;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
+        rv = findViewById(R.id.rv);
+        fab = findViewById(R.id.fab);
+
+        toolbar.setTitle("Kişiler Uygulaması");
+        setSupportActionBar(toolbar);
+
+        vt = new Veritabani(this);
+
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+
+        kisilerArrayList = new KisilerDao().tumKisiler(vt);
+
+        adapter = new KisilerAdapter(this,kisilerArrayList,vt);
+        rv.setAdapter(adapter);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertGoster();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_ara);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Log.e("onQueryTextSubmit",query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.e("onQueryTextChange",newText);
+
+        kisilerArrayList = new KisilerDao().kisilerArama(vt,newText);
+
+        adapter = new KisilerAdapter(this,kisilerArrayList,vt);
+        rv.setAdapter(adapter);
+        return false;
+    }
+
+    public void alertGoster() {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View view = layoutInflater.inflate(R.layout.alert_tasarim,null);
+
+        EditText editTextAd = view.findViewById(R.id.editTextAd);
+        EditText editTextTel = view.findViewById(R.id.editTextTel);
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+        ad.setTitle("Kişi Ekle");
+        ad.setView(view);
+
+        ad.setPositiveButton("Ekle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String kisi_ad = editTextAd.getText().toString().trim();
+                String kisi_tel = editTextTel.getText().toString().trim();
+
+                new KisilerDao().kisiEkle(vt,kisi_ad,kisi_tel);
+
+                kisilerArrayList = new KisilerDao().tumKisiler(vt);
+                adapter = new KisilerAdapter(getApplicationContext(),kisilerArrayList,vt);
+                rv.setAdapter(adapter);
+
+                Toast.makeText(getApplicationContext(),kisi_ad+" - "+kisi_tel,Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        ad.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        ad.create().show();
+    }
+}
+```
+* Kisiler
+```
+package com.example.kisileruygulamas;
+
+public class Kisiler {
+    private int kisi_id;
+    private String kisi_ad;
+    private String kisi_tel;
+
+    public Kisiler() {
+
+    }
+
+    public Kisiler(int kisi_id, String kisi_ad, String kisi_tel) {
+        this.kisi_id = kisi_id;
+        this.kisi_ad = kisi_ad;
+        this.kisi_tel = kisi_tel;
+    }
+
+    public int getKisi_id() {
+        return kisi_id;
+    }
+
+    public void setKisi_id(int kisi_id) {
+        this.kisi_id = kisi_id;
+    }
+
+    public String getKisi_ad() {
+        return kisi_ad;
+    }
+
+    public void setKisi_ad(String kisi_ad) {
+        this.kisi_ad = kisi_ad;
+    }
+
+    public String getKisi_tel() {
+        return kisi_tel;
+    }
+
+    public void setKisi_tel(String kisi_tel) {
+        this.kisi_tel = kisi_tel;
+    }
+}
+```
+* KisilerAdapter
+```
+package com.example.kisileruygulamas;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
+
+public class KisilerAdapter extends RecyclerView.Adapter<KisilerAdapter.CardTasarimTutucu> {
+    private Context mContext;
+    private List<Kisiler> kisilerList;
+    private Veritabani vt;
+
+    public KisilerAdapter(Context mContext, List<Kisiler> kisilerList, Veritabani vt) {
+        this.mContext = mContext;
+        this.kisilerList = kisilerList;
+        this.vt = vt;
+    }
+
+    @NonNull
+    @Override
+    public CardTasarimTutucu onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.kisi_kard_tasarim,parent,false);
+        return new CardTasarimTutucu(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CardTasarimTutucu holder, int position) {
+      final Kisiler kisi = kisilerList.get(position);
+
+        holder.textViewKisiBilgi.setText(kisi.getKisi_ad()+" - "+kisi.getKisi_tel());
+
+        holder.imageViewNokta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                PopupMenu popupMenu = new PopupMenu(mContext,holder.imageViewNokta);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu,popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        switch (item.getItemId()) {
+                            case R.id.action_sil:
+                                Snackbar.make(holder.imageViewNokta,"Kişi Silinsin mi ?",Snackbar.LENGTH_SHORT)
+                                        .setAction("Evet", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        new KisilerDao().kisiSil(vt,kisi.getKisi_id());
+
+                                        kisilerList = new KisilerDao().tumKisiler(vt);
+
+                                        notifyDataSetChanged();
+                                    }
+                                }).show();
+                                return true;
+                            case R.id.action_guncelle:
+                                alertGoster(kisi);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                popupMenu.show();
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return kisilerList.size();
+    }
+
+    public class CardTasarimTutucu extends RecyclerView.ViewHolder {
+        private TextView textViewKisiBilgi;
+        private ImageView imageViewNokta;
+
+
+        public CardTasarimTutucu(@NonNull View itemView) {
+            super(itemView);
+
+            textViewKisiBilgi = itemView.findViewById(R.id.textViewKisiBilgi);
+            imageViewNokta = itemView.findViewById(R.id.imageViewNokta);
+
+
+        }
+    }
+
+    public void alertGoster(Kisiler kisi) {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        View view = layoutInflater.inflate(R.layout.alert_tasarim,null);
+
+        EditText editTextAd = view.findViewById(R.id.editTextAd);
+        EditText editTextTel = view.findViewById(R.id.editTextTel);
+
+        editTextAd.setText(kisi.getKisi_ad());
+        editTextTel.setText(kisi.getKisi_tel());
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
+        ad.setTitle("Kişi Güncelle");
+        ad.setView(view);
+
+        ad.setPositiveButton("Güncelle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String kisi_ad = editTextAd.getText().toString().trim();
+                String kisi_tel = editTextTel.getText().toString().trim();
+
+                new KisilerDao().kisiGuncelle(vt,kisi.getKisi_id(),kisi_ad,kisi_tel);
+
+                kisilerList = new KisilerDao().tumKisiler(vt);
+
+                notifyDataSetChanged();
+
+            }
+        });
+
+        ad.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        ad.create().show();
+    }
+}
+```
+* KisilerDao
+```
+package com.example.kisileruygulamas;
+
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+
+public class KisilerDao {
+
+    public ArrayList<Kisiler> tumKisiler(Veritabani vt) {
+
+        ArrayList<Kisiler> kisilerArrayList = new ArrayList<>();
+
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM kisiler", null);
+
+        while(c.moveToNext()) {
+            @SuppressLint("Range") Kisiler k = new Kisiler(c.getInt(c.getColumnIndex("kisi_id"))
+                    ,c.getString(c.getColumnIndex("kisi_ad"))
+                    ,c.getString(c.getColumnIndex("kisi_tel")));
+
+            kisilerArrayList.add(k);
+        }
+        db.close();
+
+        return kisilerArrayList;
+    }
+
+    public ArrayList<Kisiler> kisilerArama(Veritabani vt,String aramaKelime) {
+
+        ArrayList<Kisiler> kisilerArrayList = new ArrayList<>();
+
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM kisiler WHERE kisi_ad like '%"+aramaKelime+"%'", null);
+
+        while(c.moveToNext()) {
+            @SuppressLint("Range") Kisiler k = new Kisiler(c.getInt(c.getColumnIndex("kisi_id"))
+                    ,c.getString(c.getColumnIndex("kisi_ad"))
+                    ,c.getString(c.getColumnIndex("kisi_tel")));
+
+            kisilerArrayList.add(k);
+        }
+        db.close();
+
+        return kisilerArrayList;
+    }
+
+    public void kisiSil(Veritabani vt,int kisi_id) {
+        SQLiteDatabase db = vt.getWritableDatabase();
+        db.delete("kisiler","kisi_id=?",new String[]{String.valueOf(kisi_id)});
+        db.close();
+    }
+
+    public void kisiEkle(Veritabani vt,String kisi_ad,String kisi_tel){
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("kisi_ad",kisi_ad);
+        values.put("kisi_tel",kisi_tel);
+
+        db.insertOrThrow("kisiler",null,values);
+        db.close();
+    }
+
+    public void kisiGuncelle(Veritabani vt,int kisi_id,String kisi_ad,String kisi_tel){
+        SQLiteDatabase db = vt.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("kisi_ad",kisi_ad);
+        values.put("kisi_tel",kisi_tel);
+
+        db.update("kisiler",values,"kisi_id=?",new String[]{String.valueOf(kisi_id)});
+        db.close();
+    }
+}
+```
+* Veritabani
+```
+package com.example.kisileruygulamas;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class Veritabani extends SQLiteOpenHelper {
+    public Veritabani(@Nullable Context context) {
+        super(context, "rehber.sqlite", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE kisiler (kisi_id INTEGER PRIMARY KEY AUTOINCREMENT,kisi_ad TEXT,kisi_tel TEXT);");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS kisiler");
+        onCreate(db);
+    }
+}
+```
+# res-> layout
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/baseline_add_24" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* alert_tasarim.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/editTextAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="Ad"
+        android:inputType="textPersonName"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="Tel"
+        android:inputType="textPersonName"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAd" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* kisi_kard_tasarim.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageViewNokta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_more_vert_24" />
+
+            <TextView
+                android:id="@+id/textViewKisiBilgi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                android:layout_marginBottom="10dp"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+# res-> menu
+* popop_menu.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_sil"
+        android:title="Sil" />
+    <item
+        android:id="@+id/action_guncelle"
+        android:title="Güncelle" />
+</menu>
+```
+* toolbar_menu.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_ara"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Ara"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
+</menu>
+```
