@@ -644,3 +644,154 @@ dependencies {
 
 </manifest>
 ```
+---------------------
+# Picasso Kütüphanesi
+* MainActivity
+```
+package com.example.picassocalismasi;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+public class MainActivity extends AppCompatActivity {
+    private ImageView imageView;
+    private Button buttonLocal,buttonInternet1,buttonInternet2,buttonDegistir;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        imageView = findViewById(R.id.imageView);
+        buttonLocal = findViewById(R.id.buttonLocal);
+        buttonInternet1 = findViewById(R.id.buttonInternet1);
+        buttonInternet2 = findViewById(R.id.buttonInternet2);
+        buttonDegistir = findViewById(R.id.buttonDegistir);
+
+        buttonLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Picasso.get()
+                        .load(R.drawable.inception)
+                        .into(imageView);
+
+            }
+        });
+
+        buttonInternet1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://snowpiercer.store/resimler/django.png";
+                Picasso.get()
+                        .load(url)
+                        .resize(100,150)
+                        .centerCrop()
+                        .into(imageView);
+
+            }
+        });
+
+        buttonInternet2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://snowpiercer.store/resimler/"+"thehatefuleight"+".png";
+                Picasso.get()
+                        .load(url)
+                        .resize(200,300)
+                        .placeholder(R.drawable.resim1)
+                        .into(imageView);
+
+            }
+        });
+
+        buttonDegistir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://snowpiercer.store/resimler/"+"thehatefuleight"+".png";
+                Picasso.get()
+                        .load(url)
+                        .resize(400,600)
+                        .into(imageView);
+            }
+        });
+    }
+}
+```
+* build.gradle
+```
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.picassocalismasi'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.picassocalismasi"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'com.squareup.picasso:picasso:2.8'
+}
+```
+* AndroidManifest.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PicassoCalismasi"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+```
