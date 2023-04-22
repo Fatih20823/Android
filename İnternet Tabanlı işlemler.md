@@ -646,6 +646,7 @@ dependencies {
 ```
 ---------------------
 # Picasso Kütüphanesi
+![Picasso](https://user-images.githubusercontent.com/101557027/233778872-d2564cca-ecd5-466f-8e41-c8bd105fa6e1.gif)
 * MainActivity
 ```
 package com.example.picassocalismasi;
