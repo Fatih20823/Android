@@ -1,4 +1,5 @@
 # Sozluk Uygulaması Volley
+![sozluk](https://user-images.githubusercontent.com/101557027/230627171-e72584cd-f463-4f79-8a29-134345d4f799.gif)
 * MainActivity
 ```
 package com.example.szlkuygulamas;
