@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 ```
 # Alpha Animasyonu
 ![Alpha2](https://github.com/Fatih20823/Android/assets/101557027/c3413dbf-4191-4c2d-8f6b-877af721f431)
-* Android:fillAfter
+<h3>Android:fillAfter</h3>
 - Animasyon gerçekleştikten sonra önceki durumuna dönecek mi?
 - Genelde hareket animasyonlarında kullanılır.'true' yaparsak eski haline dönmez animasyon gerçekleşir ve animasyon sonucunda oluşmuş halinde kalır.
 ![AlphaFillAfter](https://github.com/Fatih20823/Android/assets/101557027/4fd1951d-f664-4744-927d-df1d736d6365)
