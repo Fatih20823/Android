@@ -100,3 +100,23 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+# İnterpolator,RepeatMode ve RepeatCount
+![İnterpolator](https://github.com/Fatih20823/Android/assets/101557027/45d53c3a-7426-48a5-b2cc-c9b4c05abcf9)
+![repeat](https://github.com/Fatih20823/Android/assets/101557027/f9cf3de3-ab12-4ae7-b334-20fc370b1309)
+![ınterpolator](https://github.com/Fatih20823/Android/assets/101557027/69185fdb-dc0b-412e-8feb-4fe389505ff7)
+![repeatCount](https://github.com/Fatih20823/Android/assets/101557027/a37d3458-d6ec-48d1-9512-55231bfeb43a)
+* blinkcalismasi.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <alpha
+        android:duration="1000"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:repeatMode="reverse"
+        android:repeatCount="infinite"
+        android:interpolator="@android:anim/bounce_interpolator"/>
+
+</set>
+```
