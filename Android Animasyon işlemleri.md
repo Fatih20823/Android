@@ -120,3 +120,55 @@ public class MainActivity extends AppCompatActivity {
 
 </set>
 ```
+# Rotate Animasyonu
+![Rotate](https://github.com/Fatih20823/Android/assets/101557027/1df66dee-be9f-4b59-b4dd-1e6b4188051a)
+![Rotate](https://github.com/Fatih20823/Android/assets/101557027/1b75f32c-c340-460d-b476-ea6851f1afb0)
+* MainActivity
+```
+package com.example.animasyonislemleri;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+    private Button button2,buttonYap;
+    private Animation animation;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        button2 = findViewById(R.id.button2);
+        buttonYap = findViewById(R.id.buttonYap);
+
+        animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotatecalismasi);
+
+        buttonYap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button2.startAnimation(animation);
+            }
+        });
+    }
+}
+```
+* rotatecalismasi.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <rotate
+        android:fromDegrees="0"
+        android:toDegrees="90"
+        android:duration="1000"
+        android:pivotY="50%"
+        android:pivotX="50%"/>
+
+</set>
+```
