@@ -172,3 +172,56 @@ public class MainActivity extends AppCompatActivity {
 
 </set>
 ```
+# Scale Animasyonu
+![Scale](https://github.com/Fatih20823/Android/assets/101557027/8ba4841a-2e80-4bba-8a98-2deb42baedf8)
+![Desktop Screenshot 2023 05 25 - 16 14 59 100 (2)](https://github.com/Fatih20823/Android/assets/101557027/d9bc7f3b-6415-4f90-b77e-3a9c2b07d537)
+* MainActivity
+```
+package com.example.animasyonislemleri;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+    private Button button2,buttonYap;
+    private Animation animation;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        button2 = findViewById(R.id.button2);
+        buttonYap = findViewById(R.id.buttonYap);
+
+        animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.scalecalismasi);
+
+        buttonYap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button2.startAnimation(animation);
+            }
+        });
+    }
+}
+```
+* scaleanimasyonu.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <scale
+        android:duration="300"
+        android:fromXScale="1.0"
+        android:toXScale="2.0"
+        android:fromYScale="1.0"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+</set>
+```
