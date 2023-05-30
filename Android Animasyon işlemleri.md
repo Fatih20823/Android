@@ -281,3 +281,102 @@ public class MainActivity extends AppCompatActivity {
 
 </set>
 ```
+# Zamansal İşlemler
+![Zamansal](https://github.com/Fatih20823/Android/assets/101557027/ef459ccd-d876-4aea-81f8-ef250eb4b1b9)
+![Desktop Screenshot 2023 05 26 - 11 25 25 87 (2)](https://github.com/Fatih20823/Android/assets/101557027/3d1d41bd-91f0-45ea-969f-2b02bcf16fa8)
+![Ardışık zamn](https://github.com/Fatih20823/Android/assets/101557027/560fdd69-f8f5-4016-bb23-88a4bcd103db)
+* aynianda.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <scale
+        android:duration="1000"
+        android:fromYScale="1.0"
+        android:toYScale="2.0"
+        android:fromXScale="1.0"
+        android:toXScale="2.0"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+    <alpha
+        android:duration="1000"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"/>
+
+    <translate
+        android:duration="1000"
+        android:fromYDelta="0%p"
+        android:toYDelta="50%p"/>
+
+</set>
+```
+# Ardışık Animasyon Yapma
+![Desktop Screenshot 2023 05 26 - 11 48 00 03 (2)](https://github.com/Fatih20823/Android/assets/101557027/40b2cf3f-13e0-4db3-8bf5-0a793fdfd221)
+![Desktop Screenshot 2023 05 26 - 11 47 53 35 (2)](https://github.com/Fatih20823/Android/assets/101557027/bd3dc3da-13c8-4f92-863e-5858450e5326)
+![Adsız tasarım (1)](https://github.com/Fatih20823/Android/assets/101557027/693799e4-ff92-4f31-a3a2-08d09990b77a)
+* ardisikislem.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <translate
+        android:duration="800"
+        android:startOffset="300"
+        android:fromXDelta="0%"
+        android:toXDelta="100%"
+        android:fromYDelta="0%"
+        android:toYDelta="0%"/>
+
+    <translate
+        android:duration="800"
+        android:startOffset="1100"
+        android:fromXDelta="0%"
+        android:toXDelta="0%"
+        android:fromYDelta="0%"
+        android:toYDelta="100%"/>
+
+    <translate
+        android:duration="800"
+        android:startOffset="1900"
+        android:fromXDelta="0%"
+        android:toXDelta="-100%"
+        android:fromYDelta="0%"
+        android:toYDelta="0%"/>
+
+    <translate
+        android:duration="800"
+        android:startOffset="2700"
+        android:fromXDelta="0%"
+        android:toXDelta="0%"
+        android:fromYDelta="0%"
+        android:toYDelta="-100%"/>
+
+    <rotate
+        android:duration="800"
+        android:startOffset="3500"
+        android:fromDegrees="0"
+        android:toDegrees="360"
+        android:pivotY="50%"
+        android:pivotX="50%"/>
+
+    <scale
+        android:duration="800"
+        android:startOffset="4300"
+        android:fromYScale="1.0"
+        android:toYScale="2.0"
+        android:fromXScale="1.0"
+        android:toXScale="2.0"
+        android:pivotY="50%"
+        android:pivotX="50%"/>
+
+    <alpha
+        android:duration="800"
+        android:startOffset="5100"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"/>
+
+</set>
+```
