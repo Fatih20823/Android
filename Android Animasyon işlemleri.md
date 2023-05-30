@@ -225,3 +225,59 @@ public class MainActivity extends AppCompatActivity {
         android:pivotY="50%"/>
 </set>
 ```
+# Translate Animasyonu
+![translate2 (1)](https://github.com/Fatih20823/Android/assets/101557027/70a5a5d6-dddb-4585-bf76-f2e678868d49)
+![translate](https://github.com/Fatih20823/Android/assets/101557027/b51a8a5e-08fb-403a-94c7-991f03a91259)
+* Cismin boyutunu referans alarak animasyon '%'
+![cisim](https://github.com/Fatih20823/Android/assets/101557027/3140929d-f17c-4733-b4b3-cde352a01104)
+* Ekran boyutunu referans alarak animasyon '%p'
+![ekran](https://github.com/Fatih20823/Android/assets/101557027/c9af64e9-3d77-4fff-beb7-ee3df255594f)
+* MainActivity
+```
+package com.example.animasyonislemleri;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+    private Button button2,buttonYap;
+    private Animation animation;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        button2 = findViewById(R.id.button2);
+        buttonYap = findViewById(R.id.buttonYap);
+
+        animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.translatecalismasi);
+
+        buttonYap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button2.startAnimation(animation);
+            }
+        });
+    }
+}
+```
+* translatecalismasi.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <translate
+        android:duration="1000"
+        android:fromXDelta="-25%p"
+        android:toXDelta="50%p"
+        android:fromYDelta="25%p"
+        android:toYDelta="50%p"/>
+
+</set>
+```
