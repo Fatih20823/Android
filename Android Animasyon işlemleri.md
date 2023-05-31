@@ -568,3 +568,137 @@ public class MainActivity extends AppCompatActivity {
 
 </set>
 ```
+# MotionLayout
+![Adsız tasarım (3)](https://github.com/Fatih20823/Android/assets/101557027/0a649887-4b16-4fd1-b095-1581c7526960)
+MotionLayout nedir?
+MotionLayout ConstraintLayout 2.0 versiyonu ile gelen uygulamalarımıza animasyonlar ekleyip ve yönetmemize yardımcı olan bir layout türüdür. Temel görevi kullanıcı etkileşimi ile birlikte UI elemanlarının hareketlendirilmesidir. Button, TextView, ImageView… gibi kullanıcıların etkileşime girdiği UI öğelerini taşımayı, yeniden boyutlandırmayı ve canlandırmayı amaçlamaktadır.
+
+MotionLayout doğrudan sahip olduğu Layoutlar veya Viewler ile çalışır yani iç içe yerleşmiş layout hiyerarşilerini veya ekran geçişlerini desteklemez.
+* MainActivity.xml
+```
+package com.example.motionlayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/teal_200"
+    app:layoutDescription="@xml/activity_main_scene"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/buttonUst"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="120dp"
+        android:backgroundTint="@color/purple_700"
+        android:text="Button Üst"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonAlt"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="120dp"
+        android:backgroundTint="@color/teal_200"
+        android:text="Button Alt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.motion.widget.MotionLayout>
+```
+* activity_main_scene.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonUst"
+               motion:framePosition="50"
+               android:alpha="0.5" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonAlt"
+               motion:framePosition="50"
+               android:alpha="0.5" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonUst"
+               motion:framePosition="25"
+               android:rotation="45" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonAlt"
+               motion:framePosition="75"
+               android:rotation="45" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonAlt"
+               motion:framePosition="50"
+               android:scaleX="0.5" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonUst"
+               motion:framePosition="50"
+               android:scaleX="0.5" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonUst"
+               motion:framePosition="50"
+               android:translationX="-100dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/buttonAlt"
+               motion:framePosition="50"
+               android:translationX="100dp" />
+       </KeyFrameSet>
+        <OnSwipe />
+        <OnClick motion:targetId="@+id/buttonUst" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:layout_height="100dp"
+            motion:layout_constraintHorizontal_bias="0.5"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="200dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/buttonUst"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="128dp" />
+        <Constraint
+            android:layout_height="100dp"
+            motion:layout_constraintHorizontal_bias="0.5"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="200dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/buttonAlt"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="128dp" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+    </ConstraintSet>
+</MotionScene>
+```
