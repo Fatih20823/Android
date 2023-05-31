@@ -380,3 +380,191 @@ public class MainActivity extends AppCompatActivity {
 
 </set>
 ```
+# Animasyonlu Float Action Button
+![Adsız tasarım (2)](https://github.com/Fatih20823/Android/assets/101557027/dcf0ff3d-8172-4a23-9f50-3eab0c91aae2)
+* MainActivity
+```
+package com.example.animasyonlufab;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+public class MainActivity extends AppCompatActivity {
+    private FloatingActionButton fabMain,fabBirinci,fabikinci;
+
+    private Animation fabacik,fabkapali,geridon,ileridon;
+
+    private Boolean fabDurum = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        fabMain = findViewById(R.id.fabMain);
+        fabBirinci = findViewById(R.id.fabBirinci);
+        fabikinci = findViewById(R.id.fabikinci);
+
+
+        fabacik = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fabacik);
+        fabkapali = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fabkapali);
+        geridon = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.geridon);
+        ileridon = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.ileridon);
+
+        fabMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(fabDurum){
+                    //tıklanıldıgında kapansın
+                    fabMain.startAnimation(geridon);
+                    fabBirinci.startAnimation(fabkapali);
+                    fabikinci.startAnimation(fabkapali);
+                    fabBirinci.setClickable(false);
+                    fabikinci.setClickable(false);
+                    fabDurum = false;
+
+                }else {
+                    // tıklanıldıgında acılsın
+                    fabMain.startAnimation(ileridon);
+                    fabBirinci.startAnimation(fabacik);
+                    fabikinci.startAnimation(fabacik);
+                    fabBirinci.setClickable(true);
+                    fabikinci.setClickable(true);
+                    fabDurum = true;
+
+
+                }
+            }
+        });
+    }
+}
+```
+* activity_main.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/main_resim" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabBirinci"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/fabMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ekle_resim" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabikinci"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/fabBirinci"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/foto_resim" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+* fabacik.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <scale
+        android:duration="300"
+        android:fromXScale="0.0"
+        android:toXScale="0.8"
+        android:fromYScale="0.0"
+        android:toYScale="0.8"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+    <alpha
+        android:duration="300"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"/>
+
+</set>
+```
+* fabkapali.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <scale
+        android:duration="300"
+        android:fromXScale="0.8"
+        android:toXScale="0.0"
+        android:fromYScale="0.8"
+        android:toYScale="0.0"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+    <alpha
+        android:duration="300"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"/>
+
+</set>
+```
+* geridon.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <rotate
+        android:duration="300"
+        android:fromDegrees="90"
+        android:toDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+</set>
+```
+* ileridon.xml
+```
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <rotate
+        android:duration="300"
+        android:fromDegrees="0"
+        android:toDegrees="90"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+
+</set>
+```
